@@ -7,6 +7,7 @@ import RegisterValidate from './components/RegisterValidate'
 import StudentMain from './components/StudentMain'
 import StudentInfo from './components/StudentInfo'
 import Logout from './components/Logout'
+import StudentCourse from './components/StudentCourse'
 
 Vue.use(Router)
 
@@ -68,6 +69,14 @@ let router = new Router({
       component: Logout,
       meta: {
         title: 'MyCourses：退出登录'
+      }
+    },
+    {
+      path: '/student_course',
+      name: 'student_course',
+      component: StudentCourse,
+      meta: {
+        title: 'MyCourses：我的课程'
       }
     }
   ]

@@ -1,7 +1,7 @@
 <template>
   <el-container style="height: 590px; border: 1px solid #eee">
     <el-aside width="200px" class="el-aside">
-      <el-menu :default-openeds="['1', '2']" default-active="/student_main" style="height: 588px">
+      <el-menu :default-openeds="['1', '/student_course']" default-active="/student_main" style="height: 588px">
         <el-link href="/#/student_main">
           <el-menu-item index="/student_main">
            <template slot="title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -9,12 +9,16 @@
            </template>
           </el-menu-item>
         </el-link>
-        <el-submenu index="2">
-          <template slot="title"><i class="el-icon-menu"></i>课程</template>
-          <el-menu-item-group>
-            <el-menu-item index="2-1">选项1</el-menu-item>
-            <el-menu-item index="2-2">选项2</el-menu-item>
-          </el-menu-item-group>
+        <el-submenu index="/student_course">
+            <template slot="title">
+              <el-link href="/#/student_course">
+                <i class="el-icon-menu"></i>课程
+              </el-link>
+            </template>
+            <el-menu-item-group>
+              <el-menu-item index="2-1">选项1</el-menu-item>
+              <el-menu-item index="2-2">选项2</el-menu-item>
+            </el-menu-item-group>
         </el-submenu>
       </el-menu>
     </el-aside>
@@ -51,7 +55,6 @@
 
 <script>
 import { getLoading } from '../loading'
-
 export default {
   name: 'StudentMain',
   mounted: function () {
