@@ -16,8 +16,7 @@
             </el-link>
           </template>
           <el-menu-item-group>
-            <el-menu-item index="2-1">选项1</el-menu-item>
-            <el-menu-item index="2-2">选项2</el-menu-item>
+            <el-menu-item v-for="course in tableData" v-if="course.condition">{{course.course}}</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
       </el-menu>
@@ -48,18 +47,16 @@
       </el-header>
 
       <el-main>
-        <el-col :span="4"><br/></el-col>
-        <el-col :span="16">
-          <el-card class="box-card">
+        <el-card class="box-card">
             <el-table
               :data="tableData"
               height="450px"
               border
-              style="width: 1041px;">
+              style="width: 1000px;">
               <el-table-column
                 prop="course"
                 label="课程"
-                width="230">
+                width="169">
               </el-table-column>
               <el-table-column
                 prop="semester"
@@ -74,43 +71,83 @@
               <el-table-column
                 prop="condition"
                 label="状态"
-                width="180" >
+                width="180">
+                <template slot-scope="scope">
+                  <i v-if="!scope.row.condition" style="color: red; font-style: normal">未加入</i>
+                  <i v-else style="color: green; font-style: normal">已加入</i>
+                </template>
               </el-table-column>
               <el-table-column
                 prop="link"
                 label= "操作"
                 width="150">
+                <template slot-scope="scope">
+                  <i v-if="!scope.row.condition" style="color: red; font-style: normal">未加入</i>
+                  <i v-else style="color: green; font-style: normal">已加入</i>
+                </template>
               </el-table-column>
             </el-table>
           </el-card>
-        </el-col>
-        <el-col :span="4"><br/></el-col>
-      </el-main>
+        </el-main>
     </el-container>
   </el-container>
 </template>
 
 <script>
-
+import { getLoading } from '../loading'
 export default {
   name: 'StudentMain',
   mounted: function () {
     this.getInfo()
+    this.getMyCourses()
   },
   methods: {
+    getInfo () {
+      const loading = getLoading(this)
+      this.$axios({
+        method: 'get',
+        url: 'http://localhost:8080/vue/student/info'
+      }).then(function (res) {
+        const info = res.data
+        loading.close()
+        this.name = info.name
+        this.url = 'http://localhost:8080' + info.portrait
+      }.bind(this)).catch(function (err) {
+        if (err.response.status === 401) {
+          this.$router.push('/login_register')
+        }
+      }.bind(this))
+    },
+    getMyCourses () {
+      this.$axios({
+        method: 'get',
+        url: 'http://localhost:8080/vue/student/courses'
+      }).then(function (res) {
+        const info = res.data
+        for (let course of info) {
+          console.log(course)
+          this.tableData.push({
+            course: course.termCourseInfo.name,
+            semester: course.termCourseInfo.term,
+            teacher: course.termCourseInfo.publisher,
+            condition: course.selected,
+            link: 'hhh'
+          })
+        }
+      }.bind(this)).catch(function (err) {
+        console.log(err)
+        if (err.response.status === 401) {
+          this.$router.push('/login_register')
+        }
+      }.bind(this))
+    }
   },
   data () {
     return {
       fit: 'cover',
       url: 'http://localhost:8080/img/portrait/default portrait.png',
       name: '',
-      tableData: [ {
-        course: '111',
-        semester: '123',
-        teacher: 'wsql',
-        condition: 'jiaru',
-        link: 'hhh'
-      }]
+      tableData: [ ]
     }
   }
 }
@@ -135,6 +172,6 @@ export default {
   }
   .box-card {
     height: 485px;
-    width: 1085px;
+    width: 1020px;
   }
 </style>
