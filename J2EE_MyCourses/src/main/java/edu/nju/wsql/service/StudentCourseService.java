@@ -36,4 +36,8 @@ public interface StudentCourseService {
     StudentPublishCourseListBean getMyCourses(String student);
 
     StudentPublishCourseListBean getMyCoursesByTermAndCourseAndTeacher(String student, String term, long course, String teacher);
+
+    boolean isTheCourseISelected(long selectCourseId, String student);
+
+    boolean isTheHomeworkOfTheCourse(long homeworkRequestId, long selectCourseId);
 }

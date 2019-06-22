@@ -4,10 +4,12 @@ import Home from './views/Home.vue'
 import DemoPage from './components/DemoPage'
 import LoginRegister from './components/LoginRegister'
 import RegisterValidate from './components/RegisterValidate'
-import StudentMain from './components/StudentMain'
-import StudentInfo from './components/StudentInfo'
+import StudentMain from './components/student/StudentMain'
+import StudentInfo from './components/student/StudentInfo'
 import Logout from './components/Logout'
-import StudentCourse from './components/StudentCourse'
+import StudentCourse from './components/student/StudentCourse'
+import StudentCourseDetail from "./components/student/StudentCourseDetail";
+import StudentHomework from "./components/student/StudentHomework";
 
 Vue.use(Router)
 
@@ -77,6 +79,22 @@ let router = new Router({
       component: StudentCourse,
       meta: {
         title: 'MyCourses：我的课程'
+      }
+    },
+    {
+      path: '/student_course/:select_course_id/',
+      name: 'student_course_select_course_id',
+      component: StudentCourseDetail,
+      meta: {
+        title: '课程详情'
+      }
+    },
+    {
+      path: '/student_course/:select_course_id/homework/:homework_request_id',
+      name: 'student_course_select_course_id_homework_homework_request_id',
+      component: StudentHomework,
+      meta: {
+        title: '作业详情'
       }
     }
   ]

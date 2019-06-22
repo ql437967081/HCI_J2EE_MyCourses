@@ -299,7 +299,27 @@ public class StudentCourseServiceImpl implements StudentCourseService {
                 terms, courses, teachers,
                 term, course, teacher);
     }
-// TODO 未提交的作业
+
+    @Override
+    @Transactional
+    public boolean isTheCourseISelected(long selectCourseId, String student) {
+        SelectCourse selectCourse = selectCourseDao.findOne(selectCourseId);
+        if (selectCourse == null)
+            return false;
+        return selectCourse.getStudent().getId().equals(student);
+    }
+
+    @Override
+    @Transactional
+    public boolean isTheHomeworkOfTheCourse(long homeworkRequestId, long selectCourseId) {
+        HomeworkRequest request = homeworkRequestDao.findOne(homeworkRequestId);
+        SelectCourse selectCourse = selectCourseDao.findOne(selectCourseId);
+        if (request == null || selectCourse == null)
+            return false;
+        return request.getPublishCourse().getId() == selectCourse.getCourseClass().getPublishCourse().getId();
+    }
+
+    // TODO 未提交的作业
     private List<StudentTermCourseBean> wrapTermCourseList(List<SelectCourse> selectCourseList) {
         List<StudentTermCourseBean> termCourseList = new ArrayList<>();
         for (SelectCourse selectCourse: selectCourseList) {
