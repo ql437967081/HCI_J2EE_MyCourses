@@ -10,6 +10,7 @@ import Logout from './components/Logout'
 import StudentCourse from './components/student/StudentCourse'
 import StudentCourseDetail from "./components/student/StudentCourseDetail";
 import StudentHomework from "./components/student/StudentHomework";
+import TeacherMain from "./components/teacher/TeacherMain";
 
 Vue.use(Router)
 
@@ -96,7 +97,15 @@ let router = new Router({
       meta: {
         title: '作业详情'
       }
-    }
+    },
+    {
+      path: '/teacher_main',
+      name: 'teacher_main',
+      component: TeacherMain,
+      meta: {
+        title: 'MyCourses：我的主页'
+      }
+    },
   ]
 })
 
