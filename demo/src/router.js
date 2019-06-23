@@ -8,9 +8,10 @@ import StudentMain from './components/student/StudentMain'
 import StudentInfo from './components/student/StudentInfo'
 import Logout from './components/Logout'
 import StudentCourse from './components/student/StudentCourse'
-import StudentCourseDetail from "./components/student/StudentCourseDetail";
-import StudentHomework from "./components/student/StudentHomework";
-import TeacherMain from "./components/teacher/TeacherMain";
+import StudentCourseDetail from './components/student/StudentCourseDetail'
+import StudentHomework from './components/student/StudentHomework'
+import TeacherMain from './components/teacher/TeacherMain'
+import TeacherInfo from './components/teacher/TeacherInfo'
 
 Vue.use(Router)
 
@@ -106,6 +107,14 @@ let router = new Router({
         title: 'MyCourses：我的主页'
       }
     },
+    {
+      path: '/teacher_info',
+      name: 'teacher_info',
+      component: TeacherInfo,
+      meta: {
+        title: 'MyCourses：个人信息'
+      }
+    }
   ]
 })
 
