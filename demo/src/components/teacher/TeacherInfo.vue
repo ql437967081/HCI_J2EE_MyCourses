@@ -12,20 +12,26 @@
         </el-link>
         <el-menu-item index="/teacher_main">
           <template slot="title">
-            <i class="el-icon-menu" style="color: #409EFF"></i>
-            <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">创建课程</i>
+            <el-link href="/#/teacher_create_course">
+              <i class="el-icon-menu" style="color: #409EFF"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">创建课程</i>
+            </el-link>
           </template>
         </el-menu-item>
         <el-menu-item index="/teacher_main">
           <template slot="title">
-            <i class="el-icon-menu" style="color: #409EFF"></i>
-            <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">发布课程</i>
+            <el-link href="/#/teacher_publish_course">
+              <i class="el-icon-menu" style="color: #409EFF"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">发布课程</i>
+            </el-link>
           </template>
         </el-menu-item>
         <el-menu-item index="/teacher_main">
           <template slot="title">
-            <i class="el-icon-menu" style="color: #409EFF"></i>
-            <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">我的课程</i>
+            <el-link href="/#/teacher_course">
+              <i class="el-icon-menu" style="color: #409EFF"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">我的课程</i>
+            </el-link>
           </template>
         </el-menu-item>
       </el-menu>
@@ -76,10 +82,8 @@
               <el-form-item label="姓名">
                 <el-input v-model="formLabelAlign.name" style="width: 90%"></el-input>
               </el-form-item>
-            </el-form>
-            <el-form :label-position="labelPosition" label-width="80px" :model="formLabelAlign" >
-              <el-form-item label="学号">
-                <el-input v-model="formLabelAlign.studentID" style="width: 90%" :disabled="true"></el-input>
+              <el-form-item label="教工号">
+                <el-input v-model="formLabelAlign.teacherID" style="width: 90%" :disabled="true"></el-input>
               </el-form-item>
               <el-form-item label="邮箱">
                 <el-input v-model="formLabelAlign.email" style="width: 90%" :disabled="true"></el-input>
@@ -97,11 +101,11 @@
 </template>
 
 <script>
+    import { getLoading } from '../../loading'
     export default {
         name: "TeacherInfo",
         mounted: function () {
           this.getInfo()
-          this.getMyCourses()
         },
         data () {
           return {
@@ -113,7 +117,7 @@
             labelPosition: 'right',
             formLabelAlign: {
               name: '',
-              studentID: '',
+              teacherID: '',
               email: ''
             },
             name: '',
@@ -129,7 +133,22 @@
             return false
           },
           getInfo () {
-
+            const loading = getLoading(this)
+            this.$axios({
+              method: 'get',
+              url: 'http://localhost:8080/vue/teacher/info'
+            }).then(function (res) {
+              const info = res.data
+              loading.close()
+              this.formLabelAlign.teacherID = info.id
+              this.formLabelAlign.email = info.email
+              this.name = this.formLabelAlign.name = info.name
+              this.url = this.imageUrl = 'http://localhost:8080' + info.portrait
+            }.bind(this)).catch(function (err) {
+              if (err.response.status === 401) {
+                this.$router.push('/login_register')
+              }
+            }.bind(this))
           },
           modify () {
             let formData = new FormData()
@@ -138,7 +157,7 @@
             console.log(formData.get('portrait'))
             this.$axios({
               method: 'post',
-              url: 'http://localhost:8080/vue/student/info',
+              url: 'http://localhost:8080/vue/teacher/info',
               headers: {
                 'Content-Type': 'multipart/form-data'
               },

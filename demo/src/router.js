@@ -15,6 +15,7 @@ import TeacherInfo from './components/teacher/TeacherInfo'
 import TeacherCourse from './components/teacher/TeacherCourse'
 import TeacherCreateCourse from './components/teacher/TeacherCreateCourse'
 import TeacherPublishCourse from './components/teacher/TeacherPublishCourse'
+import TeacherCourseDetail from './components/teacher/TeacherCourseDetail'
 import TeacherDownloadHomework from './components/teacher/TeacherDownloadHomework'
 import TeacherLauchGrades from './components/teacher/TeacherLauchGrades'
 import TeacherTermInfo from './components/teacher/TeacherTermInfo'
@@ -128,6 +129,14 @@ let router = new Router({
       component: TeacherCourse,
       meta: {
         title: 'MyCourses：我的课程'
+      }
+    },
+    {
+      path: 'teacher_course_detail',
+      name: 'teacher_course_detail',
+      component: TeacherCourseDetail,
+      meta: {
+        title: 'MyCourses：课程信息'
       }
     },
     {
