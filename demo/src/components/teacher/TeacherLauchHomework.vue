@@ -10,23 +10,46 @@
             </template>
           </el-menu-item>
         </el-link>
-        <el-submenu index="/student_course">
+        <el-menu-item index="/student_course">
           <template slot="title">
             <el-link href="/#/student_course">
               <i class="el-icon-menu" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">课程</i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">学期信息</i>
             </el-link>
           </template>
-          <el-menu-item-group v-loading="loading">
-            <el-menu-item v-for="course in tableData" v-if="course.condition" >
-              <el-link :href="'/#/student_course/' + course.link">
-                <i style="font-size: 12px; font-style: normal">
-                  {{course.course}}
-                </i>
-              </el-link>
-            </el-menu-item>
-          </el-menu-item-group>
-        </el-submenu>
+        </el-menu-item>
+        <el-menu-item index="/lauchhomework">
+          <template slot="title">
+            <el-link href="/#/student_course">
+              <i class="el-icon-menu" style="color: #409EFF"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">发布作业</i>
+            </el-link>
+          </template>
+        </el-menu-item>
+        <el-menu-item index="/student_course">
+          <template slot="title">
+            <el-link href="/#/student_course">
+              <i class="el-icon-menu" style="color: #409EFF"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">群发邮件</i>
+            </el-link>
+          </template>
+        </el-menu-item>
+        <el-menu-item index="/student_course">
+          <template slot="title">
+            <el-link href="/#/student_course">
+              <i class="el-icon-menu" style="color: #409EFF"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">下载作业</i>
+            </el-link>
+          </template>
+        </el-menu-item>
+        <el-menu-item index="/student_course">
+          <template slot="title">
+            <el-link href="/#/student_course">
+              <i class="el-icon-menu" style="color: #409EFF"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">发布成绩</i>
+            </el-link>
+          </template>
+        </el-menu-item>
       </el-menu>
     </el-aside>
 
