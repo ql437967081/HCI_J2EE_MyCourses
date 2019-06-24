@@ -31,7 +31,68 @@
       </el-menu>
     </el-aside>
 
+    <el-container>
+      <el-header class="el-header">
+        <el-dropdown>
+          <span class="el-dropdown-link">
+            <span style="position:relative;">
+              <el-image  :src="url" :fit="fit" style="width: 30px; height: 30px;"></el-image>
+              <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+              <span style="font-size: 15px; color: aliceblue; position: absolute;top:0; left: 40px">
+                {{name}}
+                <i class="el-icon-arrow-down el-icon--right"></i>
+              </span>
+            </span>
+          </span>
+          <el-dropdown-menu slot="dropdown" style="width: 100px">
+            <el-link href="/#/teacher_info">
+              <el-dropdown-item style="font-size: 15px">个人信息</el-dropdown-item>
+            </el-link>
+            <el-link href="/#/logout">
+              <el-dropdown-item style="font-size: 15px">退出登录</el-dropdown-item>
+            </el-link>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </el-header>
 
+      <el-main class="info" style="margin-top: 10px">
+        <el-col :span="5"><br/></el-col>
+        <el-col :span="16">
+          <el-card class="box-card" style="width: 80%">
+            <div style="font-size: 10px; color: #B3C0D1; ">
+              <i class="el-icon-warning"></i>点击头像可进行更换
+            </div>
+            <el-upload
+              accept="image/*"
+              class="avatar-uploader"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :show-file-list="false"
+              :on-change="handleAvatarChange"
+              :before-upload="beforeAvatarUpload">
+              <img v-if="imageUrl" :src="imageUrl" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+            <el-form :label-position="labelPosition" label-width="80px" :model="formLabelAlign">
+              <el-form-item label="姓名">
+                <el-input v-model="formLabelAlign.name" style="width: 90%"></el-input>
+              </el-form-item>
+            </el-form>
+            <el-form :label-position="labelPosition" label-width="80px" :model="formLabelAlign" >
+              <el-form-item label="学号">
+                <el-input v-model="formLabelAlign.studentID" style="width: 90%" :disabled="true"></el-input>
+              </el-form-item>
+              <el-form-item label="邮箱">
+                <el-input v-model="formLabelAlign.email" style="width: 90%" :disabled="true"></el-input>
+              </el-form-item>
+              <el-button type="primary" @click="modify">保存修改</el-button>
+              <el-button @click="getInfo" style="margin-left: 30px">重置</el-button>
+            </el-form>
+          </el-card>
+        </el-col>
+        <el-col :span="5"><br/></el-col>
+      </el-main>
+
+    </el-container>
   </el-container>
 </template>
 

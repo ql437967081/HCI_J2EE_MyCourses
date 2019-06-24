@@ -12,20 +12,26 @@
         </el-link>
         <el-menu-item index="/teacher_main">
           <template slot="title">
-            <i class="el-icon-menu" style="color: #409EFF"></i>
-            <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">创建课程</i>
+            <el-link href="/#/teacher_create_course">
+              <i class="el-icon-menu" style="color: #409EFF"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">创建课程</i>
+            </el-link>
           </template>
         </el-menu-item>
         <el-menu-item index="/teacher_main">
           <template slot="title">
-            <i class="el-icon-menu" style="color: #409EFF"></i>
-            <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">发布课程</i>
+            <el-link href="/#/teacher_publish_course">
+              <i class="el-icon-menu" style="color: #409EFF"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">发布课程</i>
+            </el-link>
           </template>
         </el-menu-item>
         <el-menu-item index="/teacher_main">
           <template slot="title">
-            <i class="el-icon-menu" style="color: #409EFF"></i>
-            <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">我的课程</i>
+            <el-link href="/#/teacher_course">
+              <i class="el-icon-menu" style="color: #409EFF"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">我的课程</i>
+            </el-link>
           </template>
         </el-menu-item>
       </el-menu>
@@ -56,8 +62,20 @@
       </el-header>
 
       <el-main>
-        <el-table>
-
+        <div style="width: 10%">
+          <el-dropdown split-button type="primary" @click="handleClick">{{year}}
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item v-for="">2019年</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+        </div>
+        <el-table :data="tableData" stripe="true" style="width: 100%">
+          <el-table-column prop="my_publish_courses" label="我发布的课程" width="300"></el-table-column>
+          <el-table-column prop="undergraduate_num" label="本科生人数" width="180"></el-table-column>
+          <el-table-column prop="graduate_num" label="研究生人数" width="180"></el-table-column>
+          <el-table-column prop="phd_num" label="博士生人数" width="180"></el-table-column>
+          <el-table-column prop="total_num" label="总人数" width="180"></el-table-column>
+          <el-table-column prop="homework_num" label="作业数" width="180"></el-table-column>
         </el-table>
       </el-main>
     </el-container>
@@ -78,7 +96,7 @@
         },
         getMyCourses() {
 
-        }
+        },
       },
       data() {
         return {
@@ -86,7 +104,8 @@
           url: 'http://localhost:8080/img/portrait/default portrait.png',
           name: 'Jim',
           loading: true,
-          courses: [ ]
+          courses: [ ],
+          year: '全部'
         }
       }
     }

@@ -12,6 +12,9 @@ import StudentCourseDetail from './components/student/StudentCourseDetail'
 import StudentHomework from './components/student/StudentHomework'
 import TeacherMain from './components/teacher/TeacherMain'
 import TeacherInfo from './components/teacher/TeacherInfo'
+import TeacherCourse from './components/teacher/TeacherCourse'
+import TeacherCreateCourse from './components/teacher/TeacherCreateCourse'
+import TeacherPublishCourse from './components/teacher/TeacherPublishCourse'
 
 Vue.use(Router)
 
@@ -113,6 +116,30 @@ let router = new Router({
       component: TeacherInfo,
       meta: {
         title: 'MyCourses：个人信息'
+      }
+    },
+    {
+      path: '/teacher_course',
+      name: 'teacher_course',
+      component: TeacherCourse,
+      meta: {
+        title: 'MyCourses：我的课程'
+      }
+    },
+    {
+      path: '/teacher_create_course',
+      name: 'teacher_create_course',
+      component: TeacherCreateCourse,
+      meta: {
+        title: 'MyCourses：创建课程'
+      }
+    },
+    {
+      path: '/teacher_publish_course',
+      name: 'teacher_publish_course',
+      component: TeacherPublishCourse,
+      meta: {
+        title: 'MyCourses：发布课程'
       }
     }
   ]
