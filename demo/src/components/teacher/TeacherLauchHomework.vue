@@ -1,0 +1,162 @@
+<template>
+  <el-container style="height: 590px; border: 1px solid #eee">
+    <el-aside width="200px" class="el-aside">
+      <el-menu :default-openeds="['/student_course']" default-active="/student_course" style="height: 588px">
+        <el-link href="/#/student_main">
+          <el-menu-item index="/student_main">
+            <template slot="title">
+              <i class="el-icon-s-home"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">主页</i>
+            </template>
+          </el-menu-item>
+        </el-link>
+        <el-submenu index="/student_course">
+          <template slot="title">
+            <el-link href="/#/student_course">
+              <i class="el-icon-menu" style="color: #409EFF"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">课程</i>
+            </el-link>
+          </template>
+          <el-menu-item-group v-loading="loading">
+            <el-menu-item v-for="course in tableData" v-if="course.condition" >
+              <el-link :href="'/#/student_course/' + course.link">
+                <i style="font-size: 12px; font-style: normal">
+                  {{course.course}}
+                </i>
+              </el-link>
+            </el-menu-item>
+          </el-menu-item-group>
+        </el-submenu>
+      </el-menu>
+    </el-aside>
+
+    <el-container>
+      <el-header class="el-header">
+        <el-dropdown>
+          <span class="el-dropdown-link">
+            <span style="position:relative;">
+              <el-image  :src="url" :fit="fit" style="width: 30px; height: 30px;"></el-image>
+              <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+              <span style="font-size: 15px; color: aliceblue; position: absolute;top:0; left: 40px">
+                {{name}}
+                <i class="el-icon-arrow-down el-icon--right"></i>
+              </span>
+            </span>
+          </span>
+          <el-dropdown-menu slot="dropdown" style="width: 100px">
+            <el-link href="/#/student_info">
+              <el-dropdown-item style="font-size: 15px">个人信息</el-dropdown-item>
+            </el-link>
+            <el-link href="/#/logout">
+              <el-dropdown-item style="font-size: 15px">退出登录</el-dropdown-item>
+            </el-link>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </el-header>
+
+      <el-main>
+          <el-card class="box-card">
+            <!--需要在el-formitem上添加prop属性才能重置-->
+            <el-form :model="form" ref="form" label-width="200px">
+              <el-form-item label="作业标题" prop="name">
+                <el-input v-model="form.name"></el-input>
+              </el-form-item>
+              <el-form-item label="作业内容" prop="content">
+                <el-input type="textarea" v-model="form.content"></el-input>
+              </el-form-item>
+              <el-form-item label="截止时间">
+                <el-col :span="11">
+                  <el-form-item prop="date1">
+                  <el-date-picker type="date" placeholder="选择日期" v-model="form.date1" style="width: 100%;"></el-date-picker>
+                  </el-form-item>
+                </el-col>
+                <el-col class="line" :span="2">-</el-col>
+                <el-col :span="11">
+                  <el-form-item prop="date2">
+                  <el-time-picker placeholder="选择时间" v-model="form.date2" style="width: 100%;"></el-time-picker>
+                  </el-form-item>
+                </el-col>
+              </el-form-item>
+              <el-form-item label="大小限制" size="small" prop="size">
+                <el-input v-model="form.size" style="width: 220px ; float: left"></el-input><span style="float: left">MB</span>
+              </el-form-item>
+              <el-form-item label="文件类型" prop="value">
+                <el-select v-model="form.value" placeholder="请选择" style="float: left">
+                  <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="onSubmit" style="float: left">立即创建</el-button>
+                <el-button @click="resetForm('form')" style="float: left">重置</el-button>
+              </el-form-item>
+            </el-form>
+        </el-card>
+      </el-main>
+    </el-container>
+  </el-container>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      form: {
+        name: '',
+        content: '',
+        date1: '',
+        date2: '',
+        size: '',
+        value: ''
+      },
+      options: [{
+        value: '选项1',
+        label: '.txt'
+      }, {
+        value: '选项2',
+        label: '.doc'
+      }, {
+        value: '选项3',
+        label: '.pdf'
+      }, {
+        value: '选项4',
+        label: '.cpp'
+      }, {
+        value: '选项5',
+        label: '.java'
+      }]
+    }
+  },
+  methods: {
+    onSubmit () {
+      alert('submit!')
+    },
+    resetForm (formName) {
+      this.$refs[formName].resetFields()
+    }
+  }
+}
+</script>
+
+<style scoped>
+  .el-header {
+    background-color: #B3C0D1;
+    color: #333;
+    line-height: 60px;
+    text-align: right;
+  }
+  .el-dropdown-link {
+    cursor: pointer;
+    height: 50px;
+    width: 200px;
+    font-size: 50px;
+  }
+  .el-aside {
+    color: #333;
+    background-color: rgb(238, 241, 246);
+  }
+</style>
