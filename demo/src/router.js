@@ -121,6 +121,70 @@ let router = new Router({
       meta: {
         title: 'MyCourses：个人信息'
       }
+    },
+    {
+      path: '/teacher_course',
+      name: 'teacher_course',
+      component: TeacherCourse,
+      meta: {
+        title: 'MyCourses：我的课程'
+      }
+    },
+    {
+      path: '/teacher_create_course',
+      name: 'teacher_create_course',
+      component: TeacherCreateCourse,
+      meta: {
+        title: 'MyCourses：创建课程'
+      }
+    },
+    {
+      path: '/teacher_publish_course',
+      name: 'teacher_publish_course',
+      component: TeacherPublishCourse,
+      meta: {
+        title: 'MyCourses：发布课程'
+      }
+    },
+    {
+      path: '/teacher_',
+      name: 'teacher_info',
+      component: TeacherInfo,
+      meta: {
+        title: 'MyCourses：个人信息'
+      }
+    },
+    {
+      path: '/TeacherSendMails',
+      name: 'TeacherSendMails',
+      component: TeacherSendMails,
+      meta: {
+        title: 'MyCourses：教师信息'
+      }
+    },
+    {
+      path: '/TeacherDownloadHomework',
+      name: ' TeacherDownloadHomework',
+      component: TeacherDownloadHomework,
+      meta: {
+        title: 'MyCourses：教师信息'
+      }
+    },
+    {
+      path: '/TeacherLauchGrades',
+      name: ' TeacherLauchGrades',
+      component: TeacherLauchGrades,
+      meta: {
+        title: 'MyCourses：发布成绩'
+      }
+    },
+    {
+      path: '/TeacherTermInfo',
+      name: 'TeacherTermInfo',
+      component: TeacherTermInfo,
+      meta: {
+        title: 'MyCourses：学期信息'
+      }
     }
   ]
 })
