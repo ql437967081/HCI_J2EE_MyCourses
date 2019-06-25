@@ -1,7 +1,7 @@
 <template>
   <el-container style="height: 590px; border: 1px solid #eee">
     <el-aside width="200px" class="el-aside">
-      <el-menu :default-openeds="['1']" default-active="/student_main" style="height: 588px">
+      <el-menu :default-openeds="['1']" default-active="/teacher_course" style="height: 588px">
         <el-link href="/#/teacher_main">
           <el-menu-item index="/teacher_main">
             <template slot="title">
@@ -10,7 +10,7 @@
             </template>
           </el-menu-item>
         </el-link>
-        <el-menu-item index="/teacher_main">
+        <el-menu-item index="/teacher_create_course">
           <template slot="title">
             <el-link href="/#/teacher_create_course">
               <i class="el-icon-menu" style="color: #409EFF"></i>
@@ -18,7 +18,7 @@
             </el-link>
           </template>
         </el-menu-item>
-        <el-menu-item index="/teacher_main">
+        <el-menu-item index="/teacher_publish_course">
           <template slot="title">
             <el-link href="/#/teacher_publish_course">
               <i class="el-icon-menu" style="color: #409EFF"></i>
@@ -26,14 +26,21 @@
             </el-link>
           </template>
         </el-menu-item>
-        <el-menu-item index="/teacher_main">
+        <el-submenu index="/teacher_course">
           <template slot="title">
             <el-link href="/#/teacher_course">
-              <i class="el-icon-menu" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">我的课程</i>
+              <i class="el-icon-menu"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">我的课程</i>
             </el-link>
           </template>
-        </el-menu-item>
+          <el-menu-item-group v-loading="loading">
+            <el-menu-item v-for="course in courses" >
+              <el-link :href="'/#/teacher_course/' + course.link">
+                {{course.course}}
+              </el-link>
+            </el-menu-item>
+          </el-menu-item-group>
+        </el-submenu>
       </el-menu>
     </el-aside>
 
@@ -62,21 +69,6 @@
       </el-header>
 
       <el-main>
-        <h2>我的课程</h2>
-        <el-row :gutter="12">
-          <el-col span="6">
-
-            <el-card class="box-card" shadow="hover">
-              <div slot="header" class="clearfix">
-                <span>卡片名称</span>
-                <el-button style="float: right; padding: 3px 0" type="text">查看</el-button>
-              </div>
-              <div v-for="o in 4" :key="o" class="text item">
-                {{'列表内容 ' + o }}
-              </div>
-            </el-card>
-          </el-col>
-        </el-row>
       </el-main>
     </el-container>
   </el-container>

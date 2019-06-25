@@ -1,7 +1,7 @@
 <template>
   <el-container style="height: 590px; border: 1px solid #eee">
     <el-aside width="200px" class="el-aside">
-      <el-menu :default-openeds="['1']" default-active="/student_main" style="height: 588px">
+      <el-menu :default-openeds="['1']" default-active="/teacher_main" style="height: 588px">
         <el-link href="/#/teacher_main">
           <el-menu-item index="/teacher_main">
             <template slot="title">
@@ -10,7 +10,7 @@
             </template>
           </el-menu-item>
         </el-link>
-        <el-menu-item index="/teacher_main">
+        <el-menu-item index="/teacher_create_course">
           <template slot="title">
             <el-link href="/#/teacher_create_course">
               <i class="el-icon-menu" style="color: #409EFF"></i>
@@ -18,7 +18,7 @@
             </el-link>
           </template>
         </el-menu-item>
-        <el-menu-item index="/teacher_main">
+        <el-menu-item index="/teacher_publish_course">
           <template slot="title">
             <el-link href="/#/teacher_publish_course">
               <i class="el-icon-menu" style="color: #409EFF"></i>
@@ -26,14 +26,22 @@
             </el-link>
           </template>
         </el-menu-item>
-        <el-menu-item index="/teacher_main">
+
+        <el-submenu index="/teacher_course">
           <template slot="title">
             <el-link href="/#/teacher_course">
-              <i class="el-icon-menu" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">我的课程</i>
+              <i class="el-icon-menu"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">我的课程</i>
             </el-link>
           </template>
-        </el-menu-item>
+          <el-menu-item-group v-loading="loading">
+            <el-menu-item v-for="course in courses" >
+              <el-link :href="'/#/teacher_course/' + course.link">
+                {{course.course}}
+              </el-link>
+            </el-menu-item>
+          </el-menu-item-group>
+        </el-submenu>
       </el-menu>
     </el-aside>
 
@@ -109,8 +117,29 @@
           }
         }.bind(this))
       },
-      getMyCourses() {
-
+      getMyCourses () {
+        this.$axios({
+          method: 'get',
+          url: 'http://localhost:8080/vue/teacher/courses'
+        }).then(function (res) {
+          this.loading = false
+          const info = res.data
+          for (let course of info) {
+            console.log(course)
+            let link = course.selected ? course.selectCourseId : course.termCourseInfo.id
+            if (course.selected) {
+              this.courses.push({
+                course: course.termCourseInfo.name,
+                link: link
+              })
+            }
+          }
+        }.bind(this)).catch(function (err) {
+          console.log(err)
+          if (err.response.status === 401) {
+            this.$router.push('/login_register')
+          }
+        }.bind(this))
       },
       handleCommand(command) {
         this.chosenYear = command

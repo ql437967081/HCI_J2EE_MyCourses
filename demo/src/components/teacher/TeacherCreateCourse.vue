@@ -1,7 +1,7 @@
-<template>
+<template xmlns="http://www.w3.org/1999/html">
   <el-container style="height: 590px; border: 1px solid #eee">
     <el-aside width="200px" class="el-aside">
-      <el-menu :default-openeds="['1']" default-active="/student_main" style="height: 588px">
+      <el-menu :default-openeds="['1']" default-active="/teacher_create_Course" style="height: 588px">
         <el-link href="/#/teacher_main">
           <el-menu-item index="/teacher_main">
             <template slot="title">
@@ -10,7 +10,7 @@
             </template>
           </el-menu-item>
         </el-link>
-        <el-menu-item index="/teacher_main">
+        <el-menu-item index="/teacher_create_course">
           <template slot="title">
             <el-link href="/#/teacher_create_course">
               <i class="el-icon-menu" style="color: #409EFF"></i>
@@ -18,7 +18,7 @@
             </el-link>
           </template>
         </el-menu-item>
-        <el-menu-item index="/teacher_main">
+        <el-menu-item index="/teacher_publish_course">
           <template slot="title">
             <el-link href="/#/teacher_publish_course">
               <i class="el-icon-menu" style="color: #409EFF"></i>
@@ -26,14 +26,21 @@
             </el-link>
           </template>
         </el-menu-item>
-        <el-menu-item index="/teacher_main">
+        <el-submenu index="/teacher_course">
           <template slot="title">
             <el-link href="/#/teacher_course">
-              <i class="el-icon-menu" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">我的课程</i>
+              <i class="el-icon-menu"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">我的课程</i>
             </el-link>
           </template>
-        </el-menu-item>
+          <el-menu-item-group v-loading="loading">
+            <el-menu-item v-for="course in courses" >
+              <el-link :href="'/#/teacher_course/' + course.link">
+                {{course.course}}
+              </el-link>
+            </el-menu-item>
+          </el-menu-item-group>
+        </el-submenu>
     </el-menu>
     </el-aside>
 
@@ -70,14 +77,20 @@
               <el-form-item label="课程名称">
                 <el-input v-model="course.courseName"></el-input>
               </el-form-item>
-              <el-form-item label="课件">
-                <el-upload class="upload-demo" drag action :limit="20" :show-file-list="true" :before-upload="beforeUpload" :file-list="fileList">
+              <el-form-item style="text-align: left" label="课件">
+                <el-upload class="upload-demo" drag action :limit="20" :show-file-list="false" :before-upload="beforeUpload" :file-list="fileList">
                   <i class="el-icon-upload" style="margin-top: 20px"></i>
                   <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
                   <div class="el-upload__tip" slot="tip" style="margin-top: -10px">
                     文件类型限制：ppt/pdf，且大小不超过 10 MB
                   </div>
                 </el-upload>
+                <br>
+                <div v-for="file in fileList" class="el-icon-document">
+                  {{file.name}}
+                  <el-button type="text" v-on:click="handleRemove($index)">删除</el-button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <br>
+                </div>
               </el-form-item>
               <el-button type="primary" @click="createCourse">创建课程</el-button>
             </el-form>
@@ -110,13 +123,19 @@
             }
           }.bind(this))
         },
+        getCourse() {
+
+        },
+        handleRemove(index) {
+          this.fileList.splice(index, 1)
+        },
         beforeUpload (file) {
           const fileSize = (file.size / 1024).toFixed(0)
           if (fileSize > 10 * 1024) {
             this.$message.error('文件大小限制：' + 10 + 'MB，你的文件大小：' + (fileSize / 1024).toFixed(2) + "MB");
             return;
           }
-          this.file = file
+          this.fileList.push(file);
           console.log(file)
         },
         createCourse() {
@@ -128,12 +147,12 @@
           fit: 'cover',
           url: 'http://localhost:8080/img/portrait/default portrait.png',
           name: '',
-          file: null,
           course: {
             courseName: '',
             creator: '',
 
           },
+          file: null,
           fileList: []
         }
       }

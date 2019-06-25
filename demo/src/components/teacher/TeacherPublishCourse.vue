@@ -1,7 +1,7 @@
 <template>
   <el-container style="height: 590px; border: 1px solid #eee">
     <el-aside width="200px" class="el-aside">
-      <el-menu :default-openeds="['1']" default-active="/student_main" style="height: 588px">
+      <el-menu :default-openeds="['1']" default-active="/teacher_main" style="height: 588px">
         <el-link href="/#/teacher_main">
           <el-menu-item index="/teacher_main">
             <template slot="title">
@@ -10,7 +10,7 @@
             </template>
           </el-menu-item>
         </el-link>
-        <el-menu-item index="/teacher_main">
+        <el-menu-item index="/teacher_create_course">
           <template slot="title">
             <el-link href="/#/teacher_create_course">
               <i class="el-icon-menu" style="color: #409EFF"></i>
@@ -18,7 +18,7 @@
             </el-link>
           </template>
         </el-menu-item>
-        <el-menu-item index="/teacher_main">
+        <el-menu-item index="/teacher_publish_course">
           <template slot="title">
             <el-link href="/#/teacher_publish_course">
               <i class="el-icon-menu" style="color: #409EFF"></i>
@@ -26,14 +26,22 @@
             </el-link>
           </template>
         </el-menu-item>
-        <el-menu-item index="/teacher_main">
+
+        <el-submenu index="/teacher_course">
           <template slot="title">
             <el-link href="/#/teacher_course">
-              <i class="el-icon-menu" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">我的课程</i>
+              <i class="el-icon-menu"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">我的课程</i>
             </el-link>
           </template>
-        </el-menu-item>
+          <el-menu-item-group v-loading="loading">
+            <el-menu-item v-for="course in courses" >
+              <el-link :href="'/#/teacher_course/' + course.link">
+                {{course.course}}
+              </el-link>
+            </el-menu-item>
+          </el-menu-item-group>
+        </el-submenu>
       </el-menu>
     </el-aside>
 
@@ -67,7 +75,7 @@
         <el-col :span="15">
           <el-card class="box-card" style="width: 80%">
             <el-form ref="publishCourse" :model="publishCourse" label-width="80px">
-              <el-form-item label="学期">
+              <el-form-item style="text-align: left" label="学期">
                 <el-date-picker v-model="year" type="year" placeholder="选择年份"></el-date-picker>
                 <span>年</span>
                 <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -78,24 +86,24 @@
                 </el-dropdown>
                 <span>学期</span>
               </el-form-item>
-              <el-form-item label="课程">
+              <el-form-item style="text-align: left" label="课程">
                 <el-dropdown style="margin-left: auto" split-button="" @command="chooseCourse">{{chosenCourse}}
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item v-for="course in courses" :command="course">{{course}}</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-form-item>
-              <el-form-item label="班次">
+              <el-form-item style="text-align: left" label="班次">
                 <el-button @click="addClass">添加班级</el-button>
-                <el-button @click.prevent="removeDomain(domain)">移除班级</el-button>
               </el-form-item>
               <el-form-item
+                style="text-align: left"
                 v-for="(domain, index) in domains"
                 :label="'班号' + (index+1)"
                 :key="domain.key"
-                :prop="'domains.' + index + '.value'"
-              >
-                <el-input-number v-model="domain.value"></el-input-number><el-button @click.prevent="removeDomain(domain)">删除</el-button>
+                :prop="'domains.' + index + '.value'">
+                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;人数&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <el-input-number v-model="domain.value"></el-input-number><el-button @click.prevent="removeClass($index)">删除</el-button>
               </el-form-item>
               <el-button type="primary" @click="publishCourse">发布课程</el-button>
             </el-form>
@@ -127,11 +135,17 @@
           }
         }.bind(this))
       },
+      getCourse() {
+
+      },
       addClass() {
         this.domains.push({
           value: '',
           key: Date.now()
         });
+      },
+      removeClass(index) {
+        this.domains.splice(index, 1)
       },
       publishCourse() {
 
