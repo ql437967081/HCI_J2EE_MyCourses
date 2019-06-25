@@ -132,8 +132,8 @@ let router = new Router({
       }
     },
     {
-      path: 'teacher_course_detail',
-      name: 'teacher_course_detail',
+      path: '/teacher_course/:course_id/',
+      name: 'teacher_course_id/',
       component: TeacherCourseDetail,
       meta: {
         title: 'MyCourses：课程信息'
