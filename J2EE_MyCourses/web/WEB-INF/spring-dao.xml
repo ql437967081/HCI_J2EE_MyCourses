@@ -13,7 +13,7 @@
         <property name="jdbcUrl"
                   value="jdbc:mysql://localhost:3306/j2ee_my_courses?useUnicode=true&amp;characterEncoding=UTF8&amp;useSSL=true"/>
         <property name="user" value="root"/>
-        <property name="password" value="123456"/>
+        <property name="password" value="hms988662"/>
     </bean>
 
     <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
