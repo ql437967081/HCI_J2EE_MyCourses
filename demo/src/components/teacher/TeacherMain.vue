@@ -124,7 +124,7 @@
         loading: true,
         courses: [],
         year: '全部',
-        years: ['2019', '2018', '2017'],
+        years: ['2019', '2018', '2017', '2016'],
         chosenYear: '全部年份'
       }
     }

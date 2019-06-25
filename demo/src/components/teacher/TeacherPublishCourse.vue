@@ -70,28 +70,32 @@
               <el-form-item label="学期">
                 <el-date-picker v-model="year" type="year" placeholder="选择年份"></el-date-picker>
                 <span>年</span>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                <el-dropdown split-button="">
-                  -
+                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <el-dropdown split-button="" @command="chooseSeason">{{chosenSeason}}
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item>春季</el-dropdown-item>
-                    <el-dropdown-item>夏季</el-dropdown-item>
-                    <el-dropdown-item>秋季</el-dropdown-item>
-                    <el-dropdown-item>冬季</el-dropdown-item>
+                    <el-dropdown-item v-for="season in seasons" :command="season">{{season}}</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
-                <span>&nbsp;&nbsp;&nbsp;</span>
                 <span>学期</span>
               </el-form-item>
               <el-form-item label="课程">
-                <el-dropdown>
-                  <el-dropdown-menu slot="dropdown">{{course}}
-
+                <el-dropdown style="margin-left: auto" split-button="" @command="chooseCourse">{{chosenCourse}}
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item v-for="course in courses" :command="course">{{course}}</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-form-item>
               <el-form-item label="班次">
-
+                <el-button @click="addClass">添加班级</el-button>
+                <el-button @click.prevent="removeDomain(domain)">移除班级</el-button>
+              </el-form-item>
+              <el-form-item
+                v-for="(domain, index) in domains"
+                :label="'班号' + (index+1)"
+                :key="domain.key"
+                :prop="'domains.' + index + '.value'"
+              >
+                <el-input-number v-model="domain.value"></el-input-number><el-button @click.prevent="removeDomain(domain)">删除</el-button>
               </el-form-item>
               <el-button type="primary" @click="publishCourse">发布课程</el-button>
             </el-form>
@@ -123,11 +127,20 @@
           }
         }.bind(this))
       },
-      chooseSeason(season) {
-        this.season = season
+      addClass() {
+        this.domains.push({
+          value: '',
+          key: Date.now()
+        });
       },
       publishCourse() {
 
+      },
+      chooseSeason(command) {
+        this.chosenSeason = command
+      },
+      chooseCourse(command) {
+        this.chosenCourse = command
       }
     },
     data() {
@@ -137,9 +150,15 @@
         name: '',
         year: '',
         season: '',
+        seasons: ['春季', '夏季', '秋季', '冬季'],
+        chosenSeason: '选择季度',
         course: '',
+        chosenCourse: '选择课程',
+        courses: ['线性代数'],
         publishCourse: {},
-        courseClass: {}
+        courseClass: {},
+        classes:[{value:0,}],
+        domains:[],
       }
     }
   }
