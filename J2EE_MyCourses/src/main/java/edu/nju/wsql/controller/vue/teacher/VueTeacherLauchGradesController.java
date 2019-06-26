@@ -4,9 +4,7 @@ import edu.nju.wsql.service.CourseService;
 import edu.nju.wsql.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,23 +24,25 @@ public class VueTeacherLauchGradesController {
     @Autowired
     private CourseService courseService;
 
-    @GetMapping
+    @PostMapping
     @ResponseBody
-    public String publishGrade( long id,
-                               long courseId,
+    public String publishGrade(
                                HttpServletRequest request,
                                HttpSession session,
-                               MultipartFile sheet) {
+                               @RequestParam MultipartFile sheet) {
+        System.out.println("开始发布");
+        long id = Long.parseLong(request.getParameter("id"));
         long project = Long.parseLong(request.getParameter("project"));
         String remark = request.getParameter("remark");
         boolean open = Boolean.parseBoolean(request.getParameter("open"));
+
         String filePath = session.getServletContext().getRealPath("/grade/" + id);
         String teacher = (String) session.getAttribute("login");
         String location = fileService.fileOperate(sheet, filePath, teacher);
         Map<String, Double> grades = fileService.getGrades(new File(filePath, location));
         if (grades == null) {
             session.setAttribute("alert", "上传的成绩文件格式有误");
-            return "redirect:/teacher/course/" + courseId + "/publish_grade/" + id;
+            return "redirect:/teacher/course/" + id + "/publish_grade/" + id;
         }
         courseService.publishGrade(id, project, remark, open, location, grades);
         session.setAttribute("alert", "成绩上传成功");

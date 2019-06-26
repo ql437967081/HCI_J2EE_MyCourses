@@ -82,12 +82,12 @@
           <el-card class="box-card">
             <el-form :model="form" ref="form" label-width="100px">
               <el-form-item label="类型" prop="type">
-                <el-select v-model="form.value" placeholder="请选择" style="float: left">
+                <el-select v-model="form.type" placeholder="请选择" style="float: left">
                   <el-option
                     v-for="item in option1s"
                     :key="item.value"
                     :label="item.label"
-                    :value="item.value">
+                    :value="item.id">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -112,8 +112,10 @@
                   multiple
                   style="float: left ;"
                   :before-upload="beforeUpload"
+                  :on-change="handleAvatarChange"
                   :show-file-list="false"
                 >
+                  <img v-if="imageUrl" :src="imageUrl" class="avatar">
                   <i class="el-icon-upload"></i>
                   <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
                   <div class="el-upload__tip" slot="tip" style="margin-top: 0.1px">只能上传jpg/png文件，且不超过500kb</div>
@@ -179,6 +181,7 @@ export default {
     // 方便测试，之后要删除
     this.courseId = 5
     this.getHomeworkList()
+    this.getbeforeGrades()
   },
   data () {
     return {
@@ -223,10 +226,14 @@ export default {
         label: '否'
       }],
       sheet: null,
-      courseId: ''
+      courseId: '',
+      imageUrl: ''
     }
   },
   methods: {
+    handleAvatarChange (file) {
+      this.imageUrl = URL.createObjectURL(file.raw)
+    },
     getHomeworkList () {
       alert(this.courseId)
       const loading = getLoading(this)
@@ -238,11 +245,9 @@ export default {
         }
       }).then(function (res) {
         loading.close()
-        alert('成功')
         const info = res.data
         let index = 3
         let list = info.homeworkBeans
-        alert(info.homeworkBeans.length)
         for (let homework of list) {
           console.log(homework)
           this.option1s.push({
@@ -252,10 +257,58 @@ export default {
           })
           index++
         }
+        let list2 = info.gradeBeans
+        for (let grade of list2) {
+          console.log(grade)
+          this.tableData.push({
+            file: grade.name,
+            remarks: grade.remark,
+            ispublic: grade.open
+          })
+        }
         if (info) {
           this.$message.success('作业获取成功！')
         } else {
           this.$message.error('作业未发布')
+        }
+      }.bind(this)).catch(function (err) {
+        console.log(err)
+        loading.close()
+        if (err.response.status === 401) {
+          this.$router.push('/login_register')
+        } else if (err.response.status === 402) {
+          this.$message.error('您未选择此课程')
+          this.$router.go(-1)
+        } else if (err.response.status === 403) {
+          this.$message.error('课程作业有误')
+          this.$router.go(-1)
+        }
+      })
+    },
+    getbeforeGrades () {
+      const loading = getLoading(this)
+      this.$axios({
+        method: 'get',
+        url: 'http://localhost:8080/vue/teacher/coursehomework',
+        params: {
+          id: this.courseId
+        }
+      }).then(function (res) {
+        loading.close()
+        const info = res.data
+        let list = info.gradeBeans
+        for (let grade of list) {
+          console.log(grade)
+          this.tableData.push({
+            file: grade.name,
+            remarks: grade.remark,
+            ispublic: grade.open
+          })
+        }
+        if (info) {
+          this.$message.success('过往成绩一览！')
+        } else {
+          this.$message.error('过往成绩失败')
         }
       }.bind(this)).catch(function (err) {
         console.log(err)
@@ -282,25 +335,27 @@ export default {
         type: 'warning'
       }).then(() => {
         const loading = getLoading(this)
+        let formData = new FormData()
+        formData.append('sheet', this.sheet)
+        formData.append('id', this.courseId)
+        formData.append('project', this.form.type)
+        formData.append('remark', this.form.remark)
+        formData.append('open', this.form.public)
         this.$axios({
           method: 'post',
-          url: 'http://localhost:8080/vue/teacher/lauchhomework',
-          params: {
-            id: this.courseId,
-            title: this.form.name,
-            content: this.form.content,
-            ddl: this.form.date1 + 'T' + this.form.date2,
-            file_max_size: this.form.size,
-            file_type: this.form.value
-          }
+          url: 'http://localhost:8080/vue/teacher/lauchgrades',
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          },
+          data: formData
         }).then(function (res) {
           loading.close()
           const info = res.data
           if (info) {
-            this.$message.success('作业发布成功！')
+            this.$message.success('成绩发布成功！')
             this.resetForm('form')
           } else {
-            this.$message.error('作业发布失败')
+            this.$message.error('成绩发布失败')
             this.resetForm('form')
           }
         }.bind(this)).catch(function (err) {

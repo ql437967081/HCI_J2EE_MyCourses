@@ -161,7 +161,8 @@ export default {
             date: homework.ddl,
             size: homework.fileMaxSize,
             type: homework.fileType,
-            zip: homework.submitNum
+            zip: homework.submitNum,
+            requestid: homework.id
           })
           alert(homework.location)
         }
@@ -185,7 +186,35 @@ export default {
       })
     },
     handleClick (row) {
-      alert(row.zip)
+      alert(row.requestid)
+      const loading = getLoading(this)
+      this.$axios({
+        method: 'get',
+        url: 'http://localhost:8080/vue/teacher/downloadhomework',
+        params: {
+          requestId: row.requestid
+        }
+      }).then(function (res) {
+        loading.close()
+        const info = res.data
+        if (info) {
+          this.$message.success('作业下载成功！')
+        } else {
+          this.$message.error('作业下载失败')
+        }
+      }.bind(this)).catch(function (err) {
+        console.log(err)
+        loading.close()
+        if (err.response.status === 401) {
+          this.$router.push('/login_register')
+        } else if (err.response.status === 402) {
+          this.$message.error('您未选择此课程')
+          this.$router.go(-1)
+        } else if (err.response.status === 403) {
+          this.$message.error('课程作业有误')
+          this.$router.go(-1)
+        }
+      })
     }
   },
   data () {
@@ -196,28 +225,32 @@ export default {
         date: '2019-06-23',
         size: '2MB',
         type: 'pdf',
-        zip: 200333
+        zip: 200333,
+        requestid: '1000000'
       }, {
         title: '作业二',
         content: '你叫什么名字',
         date: '2019-06-23',
         size: '2MB',
         type: 'pdf',
-        zip: 200333
+        zip: 200333,
+        requestid: '1000000'
       }, {
         title: '作业三',
         content: '你叫什么名字',
         date: '2019-06-23',
         size: '2MB',
         type: 'pdf',
-        zip: 200333
+        zip: 200333,
+        requestid: '1000000'
       }, {
         title: '作业四',
         content: '你叫什么名字',
         date: '2019-06-23',
         size: '2MB',
         type: 'pdf',
-        zip: 200333
+        zip: 200333,
+        requestid: '1000000'
       }],
       courseId: ''
     }
