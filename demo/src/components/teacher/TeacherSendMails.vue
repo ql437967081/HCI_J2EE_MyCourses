@@ -116,14 +116,43 @@ export default {
       dynamicValidateForm: {
         content: '',
         title: ''
-      }
+      },
+      courseId: '',
+      teacherId: ''
     }
+  },
+  mounted: function () {
+    this.courseId = this.$route.params.course_id
+    this.teacherId = this.$route.params.teacher_id
   },
   methods: {
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!')
+          alert(this.dynamicValidateForm.title)
+          alert(this.dynamicValidateForm.content)
+          this.courseId = 2
+          this.$axios({
+            method: 'get',
+            url: 'http://localhost:8080/vue/teacher/email',
+            params: {
+              id: this.courseId,
+              title: this.dynamicValidateForm.title,
+              content: this.dynamicValidateForm.content
+            } }).then(function (res) {
+            this.resetForm('dynamicValidateForm')
+          }.bind(this)).catch(function (err) {
+            console.log(err)
+            if (err.response.status === 401) {
+              this.$router.push('/login_register')
+            } else if (err.response.status === 402) {
+              this.$message.error('您未选择此课程')
+              this.$router.go(-1)
+            } else if (err.response.status === 403) {
+              this.$message.error('课程作业有误')
+              this.$router.go(-1)
+            }
+          }.bind(this))
         } else {
           console.log('error submit!!')
           return false

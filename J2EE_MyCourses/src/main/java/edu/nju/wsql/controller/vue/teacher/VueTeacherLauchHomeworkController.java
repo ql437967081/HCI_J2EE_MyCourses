@@ -36,7 +36,6 @@ public class VueTeacherLauchHomeworkController {
         System.out.println(fileMaxSize);
         String fileType = request.getParameter("file_type");
         System.out.println(fileType);
-
         courseService.publishHomework(courseId, title, content, ddl, fileMaxSize, fileType);
         System.out.println("success");
         session.setAttribute("alert", "作业发布成功");

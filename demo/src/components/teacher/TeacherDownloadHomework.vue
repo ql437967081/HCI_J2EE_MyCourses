@@ -20,7 +20,7 @@
         </el-menu-item>
         <el-menu-item index="/lauchhomework">
           <template slot="title">
-            <el-link href="/#/student_course">
+            <el-link href="/#/TeacherLauchHomework">
               <i class="el-icon-menu" style="color: #409EFF"></i>
               <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">发布作业</i>
             </el-link>
@@ -131,9 +131,59 @@
 </template>
 
 <script>
+import { getLoading } from '../../loading'
 export default {
   name: 'TeacherDownloadHomework',
+  mounted: function () {
+    this.courseId = this.$route.params.couseId
+    // 方便测试，之后要删除
+    this.courseId = 5
+    this.getHomeworkList()
+  },
   methods: {
+    getHomeworkList () {
+      const loading = getLoading(this)
+      this.$axios({
+        method: 'get',
+        url: 'http://localhost:8080/vue/teacher/coursehomework',
+        params: {
+          id: this.courseId
+        }
+      }).then(function (res) {
+        loading.close()
+        const info = res.data
+        let list = info.homeworkBeans
+        for (let homework of list) {
+          console.log(homework)
+          this.tableData.push({
+            title: homework.title,
+            content: homework.content,
+            date: homework.ddl,
+            size: homework.fileMaxSize,
+            type: homework.fileType,
+            zip: homework.submitNum
+          })
+          alert(homework.location)
+        }
+        if (info) {
+          this.$message.success('作业获取成功！')
+        } else {
+          this.$message.error('作业未发布')
+        }
+      }.bind(this)).catch(function (err) {
+        console.log(err)
+        loading.close()
+        if (err.response.status === 401) {
+          this.$router.push('/login_register')
+        } else if (err.response.status === 402) {
+          this.$message.error('您未选择此课程')
+          this.$router.go(-1)
+        } else if (err.response.status === 403) {
+          this.$message.error('课程作业有误')
+          this.$router.go(-1)
+        }
+      })
+    },
     handleClick (row) {
       alert(row.zip)
     }
@@ -168,7 +218,8 @@ export default {
         size: '2MB',
         type: 'pdf',
         zip: 200333
-      }]
+      }],
+      courseId: ''
     }
   }
 }
@@ -176,5 +227,20 @@ export default {
 </script>
 
 <style scoped>
-
+  .el-header {
+    background-color: #B3C0D1;
+    color: #333;
+    line-height: 60px;
+    text-align: right;
+  }
+  .el-dropdown-link {
+    cursor: pointer;
+    height: 50px;
+    width: 200px;
+    font-size: 50px;
+  }
+  .el-aside {
+    color: #333;
+    background-color: rgb(238, 241, 246);
+  }
 </style>

@@ -111,6 +111,8 @@
                   action="https://jsonplaceholder.typicode.com/posts/"
                   multiple
                   style="float: left ;"
+                  :before-upload="beforeUpload"
+                  :show-file-list="false"
                 >
                   <i class="el-icon-upload"></i>
                   <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
@@ -169,8 +171,15 @@
 </template>
 
 <script>
+import { getLoading } from '../../loading'
 export default {
   name: 'TeacherLauchGrades',
+  mounted: function () {
+    this.courseId = this.$route.params.couseId
+    // 方便测试，之后要删除
+    this.courseId = 5
+    this.getHomeworkList()
+  },
   data () {
     return {
       tableData: [{
@@ -199,10 +208,12 @@ export default {
       },
       option1s: [{
         value: '选项1',
-        label: '考试'
+        label: '考试',
+        id: '100000'
       }, {
         value: '选项2',
-        label: '作业'
+        label: '作业',
+        id: '10000000'
       }],
       option2s: [{
         value: '选项1',
@@ -210,7 +221,104 @@ export default {
       }, {
         value: '选项2',
         label: '否'
-      }]
+      }],
+      sheet: null,
+      courseId: ''
+    }
+  },
+  methods: {
+    getHomeworkList () {
+      alert(this.courseId)
+      const loading = getLoading(this)
+      this.$axios({
+        method: 'get',
+        url: 'http://localhost:8080/vue/teacher/coursehomework',
+        params: {
+          id: this.courseId
+        }
+      }).then(function (res) {
+        loading.close()
+        alert('成功')
+        const info = res.data
+        let index = 3
+        let list = info.homeworkBeans
+        alert(info.homeworkBeans.length)
+        for (let homework of list) {
+          console.log(homework)
+          this.option1s.push({
+            value: '选项' + index,
+            label: homework.title,
+            id: homework.id
+          })
+          index++
+        }
+        if (info) {
+          this.$message.success('作业获取成功！')
+        } else {
+          this.$message.error('作业未发布')
+        }
+      }.bind(this)).catch(function (err) {
+        console.log(err)
+        loading.close()
+        if (err.response.status === 401) {
+          this.$router.push('/login_register')
+        } else if (err.response.status === 402) {
+          this.$message.error('您未选择此课程')
+          this.$router.go(-1)
+        } else if (err.response.status === 403) {
+          this.$message.error('课程作业有误')
+          this.$router.go(-1)
+        }
+      })
+    },
+    beforeUpload (file) {
+      this.sheet = file
+    },
+
+    onSubmit () {
+      this.$confirm('确定发布这次成绩吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const loading = getLoading(this)
+        this.$axios({
+          method: 'post',
+          url: 'http://localhost:8080/vue/teacher/lauchhomework',
+          params: {
+            id: this.courseId,
+            title: this.form.name,
+            content: this.form.content,
+            ddl: this.form.date1 + 'T' + this.form.date2,
+            file_max_size: this.form.size,
+            file_type: this.form.value
+          }
+        }).then(function (res) {
+          loading.close()
+          const info = res.data
+          if (info) {
+            this.$message.success('作业发布成功！')
+            this.resetForm('form')
+          } else {
+            this.$message.error('作业发布失败')
+            this.resetForm('form')
+          }
+        }.bind(this)).catch(function (err) {
+          console.log(err)
+          loading.close()
+          if (err.response.status === 401) {
+            this.$router.push('/login_register')
+          } else if (err.response.status === 402) {
+            this.$message.error('您未选择此课程')
+            this.$router.go(-1)
+          } else if (err.response.status === 403) {
+            this.$message.error('课程作业有误')
+            this.$router.go(-1)
+          }
+        }.bind(this))
+      }).catch(() => {
+        this.$message('已取消提交')
+      })
     }
   }
 }
