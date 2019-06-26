@@ -80,7 +80,7 @@
       <el-main style="position: relative">
         <div style="width: 45%; height: 100%;position: absolute; left:20px; ">
           <el-card class="box-card">
-            <span style="margin-bottom: 20px">线性代数2019年春季学期</span>
+            <div style="margin-bottom: 20px" v-model="title">{{title}}</div>
             <el-table
               :data="tableData"
               border
@@ -115,48 +115,88 @@
 </template>
 
 <script>
+import { getLoading } from '../../loading'
 import echarts from 'echarts'
 export default {
+  // 调用
+  mounted: function () {
+    this.coursetermid = this.$route.params.couseId
+    // 方便测试，之后要删除
+    this.coursetermid = 5
+    this.termInfo()
+  },
   data () {
     return {
-      tableData: [{
-        class: '1',
-        count: '3',
-        number: '100'
-      }, {
-        class: '1',
-        count: '3',
-        number: '100'
-      }, {
-        class: '1',
-        count: '3',
-        number: '100'
-      }, {
-        class: '1',
-        count: '3',
-        number: '100'
-      }],
+      tableData: [],
       charts: '',
-      opinion: ['男', '女', '中性'],
-      opinionData: [
-        { value: 335, name: '男' },
-        { value: 310, name: '女' },
-        { value: 15, name: '中性' }
-      ]
+      opinion: [],
+      opinionData: [],
+      coursetermid: '',
+      title: ''
     }
   },
   methods: {
+    termInfo () {
+      const loading = getLoading(this)
+      this.$axios({
+        method: 'get',
+        url: 'http://localhost:8080/vue/teacher/terminfo',
+        params: {
+          id: this.coursetermid
+        }
+      }).then(function (res) {
+        loading.close()
+        const info = res.data
+        let list1 = info.classes
+        for (let courseclass of list1) {
+          console.log(courseclass)
+          this.tableData.push({
+            class: courseclass.classId,
+            count: courseclass.selectedNum,
+            number: courseclass.limitNum
+          })
+        }
+        this.title = info.name + info.year + '年' + info.season + '学期'
+        this.opinion.push('本科生')
+        this.opinion.push('研究生')
+        this.opinion.push('博士生')
+        this.opinionData.push({
+          value: info.numOfUndergraduate,
+          name: '本科生'
+        })
+        this.opinionData.push({
+          value: info.numOfGraduate,
+          name: '研究生'
+        })
+        this.opinionData.push({
+          value: info.numOfDoctor,
+          name: '博士生'
+        })
+        this.drawPie('main')
+      }.bind(this)).catch(function (err) {
+        console.log(err)
+        loading.close()
+        if (err.response.status === 401) {
+          this.$router.push('/login_register')
+        } else if (err.response.status === 402) {
+          this.$message.error('您未选择此课程')
+          this.$router.go(-1)
+        } else if (err.response.status === 403) {
+          this.$message.error('课程作业有误')
+          this.$router.go(-1)
+        }
+      })
+    },
     drawPie (id) {
       this.charts = echarts.init(document.getElementById(id))
       this.charts.setOption({
         title: {
-          text: '成绩统计',
+          text: this.title + '成绩统计',
           subtext: '纯属虚构',
           x: 'center'
         },
         tooltip: {
           trigger: 'item'
-
         },
         legend: {
           orient: 'vertical',
@@ -192,12 +232,6 @@ export default {
         ]
       })
     }
-  },
-  // 调用
-  mounted () {
-    this.$nextTick(function () {
-      this.drawPie('main')
-    })
   }
 }
 </script>
