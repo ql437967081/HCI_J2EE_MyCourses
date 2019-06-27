@@ -10,12 +10,6 @@
             </template>
           </el-menu-item>
         </el-link>
-        <el-menu-item index="/teacher_course_detail">
-          <template slot="title">
-            <i class="el-icon-s-home"></i>
-            <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">课程首页</i>
-          </template>
-        </el-menu-item>
         <el-submenu index="/teacher_course">
           <template slot="title">
             <el-link href="/#/teacher_course">
@@ -62,8 +56,8 @@
       </el-header>
       <el-main>
         <el-col :span="2"><br></el-col>
-        <el-col :span="12">
-          <el-card class="box-card" style="width: 80%">
+        <el-col :span="10">
+          <el-card class="box-card" style="width: 500px">
             <h2>{{course.name}}</h2>
             <span>创建者：{{name}}</span><br><br>
             <el-form align="center" label-width="80px">
@@ -86,8 +80,8 @@
           </el-card>
         </el-col>
         <el-col :span="10">
-          <el-card class="box-card" style="width: 80%">
-            <el-table :data="publishedCourses" border style="width: 100%">
+          <el-card class="box-card" style="width: 100%">
+            <el-table :data="publishedCourses" border style="width: 80%" align="center" header-algin="center">
               <el-table-column
                 prop="semester"
                 label="学期"
@@ -96,6 +90,7 @@
             </el-table>
           </el-card>
         </el-col>
+        <el-col :span="2"><br></el-col>
       </el-main>
     </el-container>
   </el-container>
@@ -150,9 +145,6 @@
         uploadCourseware() {
 
         },
-        handleCommand(command) {
-          this.chosenYear = command
-        },
         handleRemove(index) {
           this.fileList.splice(index, 1)
         },
@@ -179,7 +171,7 @@
             name: '线性代数'
           },
           courses: [],
-          publishedCourses: [{semester: 'abc'}]
+          publishedCourses: [{semester: '2020年春季'}]
         }
       }
     }

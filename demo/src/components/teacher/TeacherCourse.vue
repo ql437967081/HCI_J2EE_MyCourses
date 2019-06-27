@@ -10,22 +10,7 @@
             </template>
           </el-menu-item>
         </el-link>
-        <el-menu-item index="/teacher_create_course">
-          <template slot="title">
-            <el-link href="/#/teacher_create_course">
-              <i class="el-icon-menu" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">创建课程</i>
-            </el-link>
-          </template>
-        </el-menu-item>
-        <el-menu-item index="/teacher_publish_course">
-          <template slot="title">
-            <el-link href="/#/teacher_publish_course">
-              <i class="el-icon-menu" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">发布课程</i>
-            </el-link>
-          </template>
-        </el-menu-item>
+
         <el-submenu index="/teacher_course">
           <template slot="title">
             <el-link href="/#/teacher_course">
@@ -69,6 +54,40 @@
       </el-header>
 
       <el-main>
+        <el-col :span="2"><br></el-col>
+        <el-col :span="12">
+          <el-card class="box-card" style="width: 600px">
+            <h2>{{ courseName }}</h2>
+            <span>创建者：{{name}}</span><br><br>
+            <el-form align="center" label-width="80px">
+              <el-form-item style="text-align: left" label="课件">
+                <div v-for="file in fileList" class="el-icon-document">
+                  {{file.name}}
+                  <el-button type="text" v-on:click="handleRemove($index)">删除</el-button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <br>
+                </div>
+                <el-upload class="upload-demo" drag action :limit="20" :show-file-list="false" :before-upload="beforeUpload" :file-list="fileList">
+                  <i class="el-icon-upload" style="margin-top: 20px"></i>
+                  <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                  <div class="el-upload__tip" slot="tip" style="margin-top: -20px">
+                    &nbsp;&nbsp;&nbsp;文件类型限制：ppt/pdf，且大小不超过 10 MB
+                  </div>
+                </el-upload>
+              </el-form-item>
+              <el-button type="primary" @click="uploadCourseware">提交</el-button>
+            </el-form>
+          </el-card>
+        </el-col>
+        <el-col :span="8">
+          <el-card class="box-card" style="width: 100%">
+            <el-table :data="publishedCourses" border style="width: 80%" align="center" header-algin="center">
+              <el-table-column prop="semester" label="学期" width="308">
+
+              </el-table-column>
+            </el-table>
+          </el-card>
+        </el-col>
+        <el-col :span="2"><br></el-col>
       </el-main>
     </el-container>
   </el-container>
@@ -99,8 +118,20 @@
           getMyCourses() {
 
           },
-          handleCommand(command) {
-            this.chosenYear = command
+          uploadCourseware() {
+
+          },
+          handleRemove(index) {
+            this.fileList.splice(index, 1)
+          },
+          beforeUpload (file) {
+            const fileSize = (file.size / 1024).toFixed(0)
+            if (fileSize > 10 * 1024) {
+              this.$message.error('文件大小限制：' + 10 + 'MB，你的文件大小：' + (fileSize / 1024).toFixed(2) + "MB");
+              return;
+            }
+            this.fileList.push(file);
+            console.log(file)
           }
         },
         data() {
@@ -109,7 +140,11 @@
             url: 'http://localhost:8080/img/portrait/default portrait.png',
             name: '',
             loading: true,
+            file: null,
+            fileList: [],
+            courseName: '线性代数',
             courses: [],
+            publishedCourses: [{semester: '2020年春季学期'}]
           }
         }
     }
@@ -122,14 +157,40 @@
     line-height: 60px;
     text-align: right;
   }
+
   .el-dropdown-link {
     cursor: pointer;
     height: 50px;
     width: 200px;
     font-size: 50px;
   }
+
   .el-aside {
     color: #333;
     background-color: rgb(238, 241, 246);
+  }
+
+  .box-card {
+    width: 1020px;
+  }
+
+  .text-wrapper {
+    word-break: break-all;
+    word-wrap: break-word;
+    float: left;
+    font-weight: normal;
+  }
+
+  .upload-demo {
+    float: left;
+    font-weight: normal;
+  }
+</style>
+<style>
+  /*修改拖动上传的默认样式*/
+  .el-upload-dragger {
+    height: 135px !important;
+    margin-top: 5px;
+    margin-left: 10px;
   }
 </style>

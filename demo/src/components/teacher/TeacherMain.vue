@@ -10,32 +10,14 @@
             </template>
           </el-menu-item>
         </el-link>
-        <el-menu-item index="/teacher_create_course">
-          <template slot="title">
-            <el-link href="/#/teacher_create_course">
-              <i class="el-icon-menu" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">创建课程</i>
-            </el-link>
-          </template>
-        </el-menu-item>
-        <el-menu-item index="/teacher_publish_course">
-          <template slot="title">
-            <el-link href="/#/teacher_publish_course">
-              <i class="el-icon-menu" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">发布课程</i>
-            </el-link>
-          </template>
-        </el-menu-item>
 
         <el-submenu index="/teacher_course">
           <template slot="title">
-            <el-link href="/#/teacher_course">
-              <i class="el-icon-menu"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">我的课程</i>
-            </el-link>
+            <i class="el-icon-menu"></i>
+            <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">我的课程</i>
           </template>
           <el-menu-item-group v-loading="loading">
-            <el-menu-item v-for="course in courses" >
+            <el-menu-item v-for="course in createdCourses" >
               <el-link :href="'/#/teacher_course/' + course.link">
                 {{course.course}}
               </el-link>
@@ -69,25 +51,79 @@
         </el-dropdown>
       </el-header>
 
-      <el-main>
+      <el-main class="teacherMain" style="margin-top: 10px">
         <h2>主页</h2>
-        <div style="width: 10%">
-          <el-dropdown split-button="" @command="handleCommand">{{chosenYear}}
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item v-for="year_ in years" :command="year_">{{year_}}</el-dropdown-item>
-            </el-dropdown-menu>
-
-
-          </el-dropdown>
-        </div>
-        <el-table :data="tableData" stripe="true" align="center" style="width: 100%">
-          <el-table-column prop="my_publish_courses" label="我发布的课程" width="300"></el-table-column>
-          <el-table-column prop="undergraduate_num" label="本科生人数" width="180"></el-table-column>
-          <el-table-column prop="graduate_num" label="研究生人数" width="180"></el-table-column>
-          <el-table-column prop="phd_num" label="博士生人数" width="180"></el-table-column>
-          <el-table-column prop="total_num" label="总人数" width="180"></el-table-column>
-          <el-table-column prop="homework_num" label="作业数" width="180"></el-table-column>
-        </el-table>
+        <el-col :span="4"><br/></el-col>
+        <el-col :span="16">
+          <el-card class="box-card" style="width: 100%">
+            <el-tabs v-model="activeName">
+              <el-tab-pane name="first">
+                <span slot="label">&nbsp;<i class="el-icon-edit-outline"></i> 创建课程&nbsp;</span>
+                <el-card class="box-card" style="width: 100%">
+                  <el-form ref="courseName" :model="courseName" label-width="80px">
+                    <el-form-item label="课程名称">
+                      <el-input v-model="courseName"></el-input>
+                    </el-form-item>
+                    <el-form-item style="text-align: left" label="课件">
+                      <el-upload class="upload-demo" drag action :limit="20" :show-file-list="false" :before-upload="beforeUpload" :file-list="fileList">
+                        <i class="el-icon-upload" style="margin-top: 20px"></i>
+                        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                        <div class="el-upload__tip" slot="tip" style="margin-top: -10px">
+                          &nbsp;&nbsp;&nbsp;&nbsp;文件类型限制：ppt/pdf，且大小不超过 10 MB
+                        </div>
+                      </el-upload>
+                      <br>
+                      <div v-for="file in fileList" class="el-icon-document">
+                        {{file.name}}
+                        <el-button type="text" v-on:click="handleRemove($index)">删除</el-button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <br>
+                      </div>
+                    </el-form-item>
+                    <el-button type="primary" @click="createCourse">创建课程</el-button>
+                  </el-form>
+                </el-card>
+              </el-tab-pane>
+              <el-tab-pane name="second">
+                <span slot="label">&nbsp;<i class="el-icon-s-order"></i> 发布课程&nbsp;</span>
+                <el-card class="box-card" style="width: 100%">
+                  <el-form ref="publishCourse" :model="publishCourse" label-width="80px">
+                    <el-form-item style="text-align: left" label="学期">
+                      <el-date-picker v-model="year" type="year" placeholder="选择年份"></el-date-picker>
+                      <span>&nbsp;年</span>
+                      <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                      <el-dropdown split-button="" @command="chooseSeason">{{chosenSeason}}
+                        <el-dropdown-menu slot="dropdown">
+                          <el-dropdown-item v-for="season in seasons" :command="season">{{season}}</el-dropdown-item>
+                        </el-dropdown-menu>
+                      </el-dropdown>
+                      <span>&nbsp;学期</span>
+                    </el-form-item>
+                    <el-form-item style="text-align: left" label="课程">
+                      <el-dropdown style="margin-left: auto" split-button="" @command="chooseCourse">{{chosenCourse}}
+                        <el-dropdown-menu slot="dropdown">
+                          <el-dropdown-item v-for="course in createdCourses" :command="course">{{course}}</el-dropdown-item>
+                        </el-dropdown-menu>
+                      </el-dropdown>
+                    </el-form-item>
+                    <el-form-item style="text-align: left" label="班次">
+                      <el-button @click="addClass">添加班级</el-button>
+                    </el-form-item>
+                    <el-form-item
+                      style="text-align: left"
+                      v-for="(domain, index) in domains"
+                      :label="'班号' + (index+1)"
+                      :key="domain.key"
+                      :prop="'domains.' + index + '.value'">
+                      <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;人数&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                      <el-input-number v-model="domain.value"></el-input-number><el-button @click.prevent="removeClass($index)">删除</el-button>
+                    </el-form-item>
+                    <el-button type="primary" @click="publishCourse">发布课程</el-button>
+                  </el-form>
+                </el-card>
+              </el-tab-pane>
+            </el-tabs>
+          </el-card>
+        </el-col>
       </el-main>
     </el-container>
   </el-container>
@@ -100,7 +136,7 @@
     name: "TeacherMain",
     mounted: function () {
       this.getInfo()
-      this.getMyCourses()
+      this.getMyCreatedCourses()
     },
     methods: {
       getInfo() {
@@ -117,7 +153,7 @@
           }
         }.bind(this))
       },
-      getMyCourses () {
+      getMyCreatedCourses () {
         this.$axios({
           method: 'get',
           url: 'http://localhost:8080/vue/teacher/courses'
@@ -128,7 +164,7 @@
             console.log(course)
             let link = course.selected ? course.selectCourseId : course.termCourseInfo.id
             if (course.selected) {
-              this.courses.push({
+              this.createdCourses.push({
                 course: course.termCourseInfo.name,
                 link: link
               })
@@ -141,8 +177,39 @@
           }
         }.bind(this))
       },
-      handleCommand(command) {
-        this.chosenYear = command
+
+      createCourse() {
+
+      },
+      publishCourse() {
+
+      },
+      handleRemove(index) {
+        this.fileList.splice(index, 1)
+      },
+      beforeUpload (file) {
+        const fileSize = (file.size / 1024).toFixed(0)
+        if (fileSize > 10 * 1024) {
+          this.$message.error('文件大小限制：' + 10 + 'MB，你的文件大小：' + (fileSize / 1024).toFixed(2) + "MB");
+          return;
+        }
+        this.fileList.push(file);
+        console.log(file)
+      },
+      addClass() {
+        this.domains.push({
+          value: '',
+          key: Date.now()
+        });
+      },
+      removeClass(index) {
+        this.domains.splice(index, 1)
+      },
+      chooseSeason(command) {
+        this.chosenSeason = command
+      },
+      chooseCourse(command) {
+        this.chosenCourse = command
       }
     },
     data() {
@@ -151,15 +218,24 @@
         url: 'http://localhost:8080/img/portrait/default portrait.png',
         name: '',
         loading: true,
-        courses: [],
-        year: '全部',
-        years: ['2019', '2018', '2017', '2016'],
-        chosenYear: '全部年份'
+        activeName: 'first',
+        year: '',
+        season: '',
+        seasons: ['春季', '夏季', '秋季', '冬季'],
+        chosenSeason: '选择季度',
+        courseName: '',
+        chosenCourse: '选择课程',
+        course: '',
+        createdCourses: [],
+        courses: ['线性代数'],
+        publishCourse: {},
+        domains:[],
+        file: null,
+        fileList: []
       }
     }
   }
 </script>
-
 <style scoped>
   .el-header {
     background-color: #B3C0D1;
@@ -178,5 +254,29 @@
   .el-aside {
     color: #333;
     background-color: rgb(238, 241, 246);
+  }
+
+  .box-card {
+    width: 1020px;
+  }
+
+  .text-wrapper {
+    word-break: break-all;
+    word-wrap: break-word;
+    float: left;
+    font-weight: normal;
+  }
+
+  .upload-demo {
+    float: left;
+    font-weight: normal;
+  }
+</style>
+<style>
+  /*修改拖动上传的默认样式*/
+  .el-upload-dragger {
+    height: 135px !important;
+    margin-top: 5px;
+    margin-left: 10px;
   }
 </style>
