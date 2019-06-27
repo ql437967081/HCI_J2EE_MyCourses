@@ -13,8 +13,8 @@
         <el-menu-item index="/student_course">
           <template slot="title">
             <el-link href="/#/TeacherTermInfo">
-              <i class="el-icon-menu" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">学期信息</i>
+              <i class="el-icon-menu" style="color: grey"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">学期信息</i>
             </el-link>
           </template>
         </el-menu-item>
@@ -29,24 +29,24 @@
         <el-menu-item index="/student_course">
           <template slot="title">
             <el-link href="/#/TeacherSendMails">
-              <i class="el-icon-menu" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">群发邮件</i>
+              <i class="el-icon-menu" style="color: grey"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">群发邮件</i>
             </el-link>
           </template>
         </el-menu-item>
         <el-menu-item index="/student_course">
           <template slot="title">
             <el-link href="/#/TeacherDownloadHomework">
-              <i class="el-icon-menu" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">下载作业</i>
+              <i class="el-icon-menu" style="color: grey"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">下载作业</i>
             </el-link>
           </template>
         </el-menu-item>
         <el-menu-item index="/student_course">
           <template slot="title">
-            <el-link href="/#/student_course">
-              <i class="el-icon-menu" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">发布成绩</i>
+            <el-link href="/#/TeacherLauchHomework">
+              <i class="el-icon-menu" style="color: grey"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">发布成绩</i>
             </el-link>
           </template>
         </el-menu-item>
@@ -80,7 +80,7 @@
       <el-main>
           <el-card class="box-card">
             <!--需要在el-formitem上添加prop属性才能重置-->
-            <el-form :model="form" ref="form" label-width="200px">
+            <el-form :model="form" ref="form" label-width="200px" style="height: 100%;">
               <el-form-item label="作业标题" prop="name">
                 <el-input v-model="form.name"></el-input>
               </el-form-item>

@@ -12,39 +12,39 @@
         </el-link>
         <el-menu-item index="/student_course">
           <template slot="title">
-            <el-link href="/#/student_course">
-              <i class="el-icon-menu" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">学期信息</i>
+            <el-link href="/#/TeacherTermInfo">
+              <i class="el-icon-menu" style="color: grey"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">学期信息</i>
             </el-link>
           </template>
         </el-menu-item>
         <el-menu-item index="/lauchhomework">
           <template slot="title">
-            <el-link href="/#/student_course">
-              <i class="el-icon-menu" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">发布作业</i>
+            <el-link href="/#/TeacherLauchHomework">
+              <i class="el-icon-menu" style="color: grey"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">发布作业</i>
             </el-link>
           </template>
         </el-menu-item>
         <el-menu-item index="/student_course">
           <template slot="title">
-            <el-link href="/#/student_course">
-              <i class="el-icon-menu" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">群发邮件</i>
+            <el-link href="/#/TeacherSendMails">
+              <i class="el-icon-menu" style="color: grey"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">群发邮件</i>
             </el-link>
           </template>
         </el-menu-item>
         <el-menu-item index="/student_course">
           <template slot="title">
-            <el-link href="/#/student_course">
-              <i class="el-icon-menu" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">下载作业</i>
+            <el-link href="/#/TeacherDownloadHomework">
+              <i class="el-icon-menu" style="color: grey"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">下载作业</i>
             </el-link>
           </template>
         </el-menu-item>
         <el-menu-item index="/student_course">
           <template slot="title">
-            <el-link href="/#/student_course">
+            <el-link href="/#/TeacherLauchHomework">
               <i class="el-icon-menu" style="color: #409EFF"></i>
               <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">发布成绩</i>
             </el-link>
@@ -327,7 +327,10 @@ export default {
     beforeUpload (file) {
       this.sheet = file
     },
-
+    resetForm (formName) {
+      this.$refs[formName].resetFields()
+      this.imageUrl = null
+    },
     onSubmit () {
       this.$confirm('确定发布这次成绩吗？', '提示', {
         confirmButtonText: '确定',
@@ -354,9 +357,11 @@ export default {
           if (info) {
             this.$message.success('成绩发布成功！')
             this.resetForm('form')
+            this.imageUrl = null
           } else {
             this.$message.error('成绩发布失败')
             this.resetForm('form')
+            this.imageUrl = null
           }
         }.bind(this)).catch(function (err) {
           console.log(err)

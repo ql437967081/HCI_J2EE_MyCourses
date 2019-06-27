@@ -12,23 +12,23 @@
         </el-link>
         <el-menu-item index="/student_course">
           <template slot="title">
-            <el-link href="/#/student_course">
-              <i class="el-icon-menu" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">学期信息</i>
+            <el-link href="/#/TeacherTermInfo">
+              <i class="el-icon-menu" style="color: grey"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">学期信息</i>
             </el-link>
           </template>
         </el-menu-item>
         <el-menu-item index="/lauchhomework">
           <template slot="title">
-            <el-link href="/#/student_course">
-              <i class="el-icon-menu" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">发布作业</i>
+            <el-link href="/#/TeacherLauchHomework">
+              <i class="el-icon-menu" style="color: grey"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">发布作业</i>
             </el-link>
           </template>
         </el-menu-item>
         <el-menu-item index="/student_course">
           <template slot="title">
-            <el-link href="/#/student_course">
+            <el-link href="/#/TeacherSendMails">
               <i class="el-icon-menu" style="color: #409EFF"></i>
               <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">群发邮件</i>
             </el-link>
@@ -36,17 +36,17 @@
         </el-menu-item>
         <el-menu-item index="/student_course">
           <template slot="title">
-            <el-link href="/#/student_course">
-              <i class="el-icon-menu" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">下载作业</i>
+            <el-link href="/#/TeacherDownloadHomework">
+              <i class="el-icon-menu" style="color: grey"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">下载作业</i>
             </el-link>
           </template>
         </el-menu-item>
         <el-menu-item index="/student_course">
           <template slot="title">
-            <el-link href="/#/student_course">
-              <i class="el-icon-menu" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">发布成绩</i>
+            <el-link href="/#/TeacherLauchHomework">
+              <i class="el-icon-menu" style="color: grey"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">发布成绩</i>
             </el-link>
           </template>
         </el-menu-item>
@@ -79,30 +79,33 @@
 
       <el-main>
         <el-card class="box-card">
-          <el-form :model="dynamicValidateForm" ref="dynamicValidateForm" label-width="100px" class="demo-dynamic">
-            <el-form-item
-              prop="title"
-              label="标题"
-              :rules="{
+          <el-col :span="4"><br></el-col>
+          <el-col :span="16">
+            <el-form :model="dynamicValidateForm" ref="dynamicValidateForm" label-width="100px" class="demo-dynamic">
+              <el-form-item
+                prop="title"
+                label="标题"
+                :rules="{
       required: true, message: '内容不能为空', trigger: 'blur'
     }"
-            >
-              <el-input v-model="dynamicValidateForm.title"></el-input>
-            </el-form-item>
-            <el-form-item
-              label="内容"
-              prop="content"
-              :rules="{
+              >
+                <el-input v-model="dynamicValidateForm.title"></el-input>
+              </el-form-item>
+              <el-form-item
+                label="内容"
+                prop="content"
+                :rules="{
       required: true, message: '内容不能为空', trigger: 'blur'
     }"
-            >
-              <el-input v-model="dynamicValidateForm.content"></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="submitForm('dynamicValidateForm')">发送</el-button>
-              <el-button @click="resetForm('dynamicValidateForm')">重置</el-button>
-            </el-form-item>
-          </el-form>
+              >
+                <el-input v-model="dynamicValidateForm.content" type="textarea"  placeholder="请输入内容" maxlength="1000" rows="5"></el-input>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="submitForm('dynamicValidateForm')">发送</el-button>
+                <el-button @click="resetForm('dynamicValidateForm')">重置</el-button>
+              </el-form-item>
+            </el-form>
+          </el-col>
         </el-card>
       </el-main>
     </el-container>
@@ -182,5 +185,11 @@ export default {
   .el-aside {
     color: #333;
     background-color: rgb(238, 241, 246);
+  }
+  .box-card {
+    height: 485px;
+  }
+  .contenttext {
+    height: 300px;
   }
 </style>

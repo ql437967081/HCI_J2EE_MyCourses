@@ -21,6 +21,7 @@ import TeacherLauchGrades from './components/teacher/TeacherLauchGrades'
 import TeacherTermInfo from './components/teacher/TeacherTermInfo'
 import TeacherSendMails from './components/teacher/TeacherSendMails'
 import TeacherLauchHomework from './components/teacher/TeacherLauchHomework'
+import TeacherCourseDetails from './components/teacher/TeacherCourseDetails'
 
 Vue.use(Router)
 
@@ -202,6 +203,14 @@ let router = new Router({
       component: TeacherLauchHomework,
       meta: {
         title: 'MyCourses：发布作业'
+      }
+    },
+    {
+      path: '/TeacherCourseDetails',
+      name: 'TeacherCourseDetails',
+      component: TeacherCourseDetails,
+      meta: {
+        title: 'MyCourses：课程细节'
       }
     }
   ]
