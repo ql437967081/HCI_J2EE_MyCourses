@@ -154,12 +154,16 @@ public class CourseServiceImpl implements CourseService {
     public void publishHomework(long id, String title, String content, String ddl, String fileMaxSize, String fileType) {
         HomeworkRequest homeworkRequest = new HomeworkRequest();
         homeworkRequest.setPublishCourse(publishCourseDao.findOne(id));
+        System.out.println(id);
         homeworkRequest.setTitle(title);
+        System.out.println(title);
         homeworkRequest.setContent(content);
         homeworkRequest.setDdl(LocalDateTime.parse(ddl));
         homeworkRequest.setFileMaxSize(Integer.parseInt(fileMaxSize));
         homeworkRequest.setFileType(fileType);
+        System.out.println(fileType);
         homeworkRequestDao.save(homeworkRequest);
+
     }
 
     @Override

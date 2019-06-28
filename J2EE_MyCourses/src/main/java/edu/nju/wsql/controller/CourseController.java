@@ -142,6 +142,7 @@ public class CourseController {
         String title = request.getParameter("title");
         String content = request.getParameter("content");
         String ddl = request.getParameter("ddl");
+        System.out.println(ddl);
         String fileMaxSize = request.getParameter("file_max_size");
         String fileType = request.getParameter("file_type");
 

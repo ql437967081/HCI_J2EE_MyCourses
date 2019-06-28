@@ -12,6 +12,17 @@ import StudentCourseDetail from "./components/student/StudentCourseDetail";
 import StudentHomework from "./components/student/StudentHomework";
 import AdminMain from "./components/admin/AdminMain";
 import AdminStatistic from "./components/admin/AdminStatistic";
+import StudentCourseDetail from './components/student/StudentCourseDetail'
+import StudentHomework from './components/student/StudentHomework'
+import TeacherMain from './components/teacher/TeacherMain'
+import TeacherInfo from './components/teacher/TeacherInfo'
+import TeacherCourse from './components/teacher/TeacherCourse'
+import TeacherDownloadHomework from './components/teacher/TeacherDownloadHomework'
+import TeacherLauchGrades from './components/teacher/TeacherLauchGrades'
+import TeacherTermInfo from './components/teacher/TeacherTermInfo'
+import TeacherSendMails from './components/teacher/TeacherSendMails'
+import TeacherLauchHomework from './components/teacher/TeacherLauchHomework'
+import TeacherCourseDetails from './components/teacher/TeacherCourseDetails'
 
 Vue.use(Router)
 
@@ -113,6 +124,78 @@ let router = new Router({
       component: AdminStatistic,
       meta: {
         title: '数据统计'
+      }
+    },
+    {
+      path: '/teacher_main',
+      name: 'teacher_main',
+      component: TeacherMain,
+      meta: {
+        title: 'MyCourses：我的主页'
+      }
+    },
+    {
+      path: '/teacher_info',
+      name: 'teacher_info',
+      component: TeacherInfo,
+      meta: {
+        title: 'MyCourses：个人信息'
+      }
+    },
+    {
+      path: '/teacher_course/:course_id',
+      name: 'teacher_course',
+      component: TeacherCourse,
+      meta: {
+        title: 'MyCourses：课程信息'
+      }
+    },
+    {
+      path: '/TeacherSendMails',
+      name: 'TeacherSendMails',
+      component: TeacherSendMails,
+      meta: {
+        title: 'MyCourses：教师信息'
+      }
+    },
+    {
+      path: '/TeacherDownloadHomework',
+      name: ' TeacherDownloadHomework',
+      component: TeacherDownloadHomework,
+      meta: {
+        title: 'MyCourses：教师信息'
+      }
+    },
+    {
+      path: '/TeacherLauchGrades',
+      name: ' TeacherLauchGrades',
+      component: TeacherLauchGrades,
+      meta: {
+        title: 'MyCourses：发布成绩'
+      }
+    },
+    {
+      path: '/TeacherTermInfo',
+      name: 'TeacherTermInfo',
+      component: TeacherTermInfo,
+      meta: {
+        title: 'MyCourses：学期信息'
+      }
+    },
+    {
+      path: '/TeacherLauchHomework',
+      name: 'TeacherLauchHomework',
+      component: TeacherLauchHomework,
+      meta: {
+        title: 'MyCourses：发布作业'
+      }
+    },
+    {
+      path: '/teacher_course/:course_id/term_course/:publishedCourse_id',
+      name: 'TeacherCourseDetails',
+      component: TeacherCourseDetails,
+      meta: {
+        title: 'MyCourses：课程细节'
       }
     }
   ]

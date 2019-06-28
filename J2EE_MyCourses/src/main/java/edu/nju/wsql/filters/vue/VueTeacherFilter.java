@@ -13,7 +13,7 @@ public class VueTeacherFilter implements Filter {
     }
 
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws ServletException, IOException {
-        if (LoginRoleUtil.filterVueLoginRole(req, resp, UserType.TEACHER))
+//        if (LoginRoleUtil.filterVueLoginRole(req, resp, UserType.TEACHER))
             chain.doFilter(req, resp);
     }
 
