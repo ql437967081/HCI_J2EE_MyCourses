@@ -8,10 +8,8 @@ import StudentMain from './components/student/StudentMain'
 import StudentInfo from './components/student/StudentInfo'
 import Logout from './components/Logout'
 import StudentCourse from './components/student/StudentCourse'
-import StudentCourseDetail from "./components/student/StudentCourseDetail";
-import StudentHomework from "./components/student/StudentHomework";
-import AdminMain from "./components/admin/AdminMain";
-import AdminStatistic from "./components/admin/AdminStatistic";
+import AdminMain from "./components/admin/AdminMain"
+import AdminStatistic from "./components/admin/AdminStatistic"
 import StudentCourseDetail from './components/student/StudentCourseDetail'
 import StudentHomework from './components/student/StudentHomework'
 import TeacherMain from './components/teacher/TeacherMain'
