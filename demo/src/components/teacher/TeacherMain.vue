@@ -1,12 +1,12 @@
 <template>
   <el-container style="height: 590px; border: 1px solid #eee">
     <el-aside width="200px" class="el-aside">
-      <el-menu :default-openeds="['1']" default-active="/teacher_main" style="height: 588px">
+      <el-menu :default-openeds="['/teacher_main']" default-active="/teacher_main" style="height: 588px">
         <el-link href="/#/teacher_main">
           <el-menu-item index="/teacher_main">
             <template slot="title">
               <i class="el-icon-s-home" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">主页</i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 15px">主页</i>
             </template>
           </el-menu-item>
         </el-link>
@@ -14,15 +14,32 @@
         <el-submenu index="/teacher_course">
           <template slot="title">
             <i class="el-icon-menu"></i>
-            <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">我的课程</i>
+            <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 15px">我的课程</i>
           </template>
-          <el-menu-item-group v-loading="loading">
-            <el-menu-item index="/teacher_courses/courseId" v-for="course in createdCourses">
+          <el-submenu v-for="course in createdCourses" index="/teacher_courses/courseId">
+            <template slot="title">
               <el-link :href="'/#/teacher_course/' + course.id">
-                {{course.courseName}}
+                <i v-if="course.id == createdCourseId" style="color: #409EFF; font-size: 12px; font-style: normal;">
+                  {{course.courseName}}
+                </i>
+                <i v-else style="font-size: 12px; font-style: normal;">{{course.courseName}}</i>
               </el-link>
-            </el-menu-item>
-          </el-menu-item-group>
+            </template>
+            <el-menu-item-group v-loading="loading">
+              <el-menu-item v-for="publishedCourse in publishedCourses" index="/teacher_term_course">
+                <el-link :href="'/#/teacher_course/' + course.id + '/term_course/' + publishedCourse.id">
+                  {{publishedCourse.courseName}}
+                </el-link>
+              </el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+          <!--<el-menu-item-group v-loading="loading">-->
+            <!--<el-menu-item index="/teacher_courses/courseId" v-for="course in createdCourses">-->
+              <!--<el-link :href="'/#/teacher_course/' + course.id">-->
+                <!--{{course.courseName}}-->
+              <!--</el-link>-->
+            <!--</el-menu-item>-->
+          <!--</el-menu-item-group>-->
         </el-submenu>
       </el-menu>
     </el-aside>
@@ -293,6 +310,7 @@
         courseName: '',
         chosenCourse: '',
         createdCourses: [],
+        publishedCourses: [],
         classes:[],
         fileList: []
       }

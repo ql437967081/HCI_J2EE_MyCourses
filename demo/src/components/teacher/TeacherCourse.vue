@@ -6,7 +6,7 @@
           <el-menu-item index="/teacher_main">
             <template slot="title">
               <i class="el-icon-s-home" style="color: grey"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">主页</i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 15px">主页</i>
             </template>
           </el-menu-item>
         </el-link>
@@ -14,18 +14,35 @@
         <el-submenu index="/teacher_course">
           <template slot="title">
             <i class="el-icon-menu"></i>
-            <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">我的课程</i>
+            <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 15px">我的课程</i>
           </template>
-          <el-menu-item-group v-loading="loading">
-            <el-menu-item index="/teacher_courses/courseId" v-for="course in createdCourses">
+          <el-submenu v-for="course in createdCourses" index="/teacher_courses/courseId">
+            <template slot="title">
               <el-link :href="'/#/teacher_course/' + course.id">
-                <i v-if="course.id == createdCourseId" style="color: #409EFF; font-size: 15px; font-style: normal;">
+                <i v-if="course.id == createdCourseId" style="color: #409EFF; font-size: 12px; font-style: normal;">
                   {{course.courseName}}
                 </i>
-                <i v-else style="font-size: 15px; font-style: normal;">{{course.courseName}}</i>
+                <i v-else style="font-size: 12px; font-style: normal;">{{course.courseName}}</i>
               </el-link>
-            </el-menu-item>
-          </el-menu-item-group>
+            </template>
+            <el-menu-item-group v-loading="loading">
+              <el-menu-item v-for="publishedCourse in publishedCourses" index="/teacher_term_course">
+                <el-link :href="'/#/teacher_course/' + course.id + '/term_course/' + publishedCourse.id">
+                    {{publishedCourse.courseName}}
+                </el-link>
+              </el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+          <!--<el-menu-item-group v-loading="loading">-->
+            <!--<el-menu-item index="/teacher_courses/courseId" v-for="course in createdCourses">-->
+              <!--<el-link :href="'/#/teacher_course/' + course.id">-->
+                <!--<i v-if="course.id == createdCourseId" style="color: #409EFF; font-size: 12px; font-style: normal;">-->
+                  <!--{{course.courseName}}-->
+                <!--</i>-->
+                <!--<i v-else style="font-size: 15px; font-style: normal;">{{course.courseName}}</i>-->
+              <!--</el-link>-->
+            <!--</el-menu-item>-->
+          <!--</el-menu-item-group>-->
         </el-submenu>
       </el-menu>
     </el-aside>
@@ -77,7 +94,7 @@
                         {{scope.row.name}}
                       </el-link>
                       </i>
-                      <i v-else> {{scope.row.name}}</i>
+                      <i v-else style="color: #a6a9ad"> {{scope.row.name}} (未提交)</i>
                       <el-button type="text" v-on:click="handleRemove(scope.row.index, scope.row)">&nbsp;&nbsp;删除</el-button>&nbsp;&nbsp;&nbsp;&nbsp;
                     </template>
                   </el-table-column>
@@ -182,6 +199,7 @@
              }
              this.coursewares = this.currentCourse.coursewares
              console.log(this.coursewares)
+             this.fileList = []
              this.publishedCourses = this.currentCourse.terms
              console.log(this.publishedCourses)
           }.bind(this)).catch(function (err) {
@@ -206,7 +224,8 @@
             },
             data: formData
           }).then(function (res) {
-            this.$router.push('/teacher_course/'+this.createdCourseId)
+            this.$message.success("课件上传成功！")
+            this.getCourse()
           }.bind(this)).catch(function (err) {
             console.log(err)
             if (err.response.status === 401) {
@@ -231,12 +250,14 @@
               let wareId = courseware.id
               this.$axios({
                 method: 'post',
-                url: 'http://localhost:8080/vue/teacher/course/' + this.createdCourseId + '/remove/' + wareId,
+                url: 'http://localhost:8080/vue/teacher/course/remove/',
                 params: {
-                  id: wareId
+                  id: this.createdCourseId,
+                  wareId : wareId
                 }
               }).then(function (res) {
-                this.$router.push('/teacher_course/'+this.createdCourseId)
+                this.$message.success("课件删除成功！")
+                this.getCourse()
               }.bind(this)).catch(function (err) {
                 console.log(err)
                 if (err.response.status === 401) {
@@ -251,16 +272,17 @@
               }.bind(this))
             }
             this.coursewares.splice(index, 1)
+            console.log(this.coursewares)
           }).catch(function (err) {
             console.log(err)
             this.$message.info('已取消删除')
-          })
+          }.bind(this))
         },
         beforeUpload (file) {
           this.fileList.push(file)
           this.coursewares.push({
             name: file.name,
-            status: ''
+            status: 'NotUpload'
           })
           console.log(file)
           console.log(this.coursewares)
@@ -282,7 +304,7 @@
           coursewares: [],
           currentCourse: {},
           createdCourses: [],
-          publishedCourses: [],
+          publishedCourses: [{id : 14, courseName : '2019年春季学期'}],
           fileList: []
         }
       }
