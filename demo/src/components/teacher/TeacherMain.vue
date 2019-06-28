@@ -72,11 +72,14 @@
                           &nbsp;&nbsp;&nbsp;&nbsp;文件类型限制：ppt/pdf，且大小不超过 10 MB
                         </div>
                       </el-upload>
-                      <div v-for="file in fileList" class="el-icon-document">
-                        {{file.name}}<br>
-                        <el-button type="text" v-on:click="handleRemove($index)">删除</el-button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <br>
-                      </div>
+                      <el-table :data="fileList" border style="width: 80%" align="center" header-algin="center">
+                        <el-table-column prop="name" label="待上传课件">
+                          <template slot-scope="scope">
+                            {{scope.row.name}}
+                            <el-button type="text" v-on:click="handleRemove(scope.row.index)">&nbsp;&nbsp;删除</el-button>&nbsp;&nbsp;&nbsp;&nbsp;
+                          </template>
+                        </el-table-column>
+                      </el-table>
                     </el-form-item>
                     <el-button type="primary" @click="createCourse">创建课程</el-button>
                   </el-form>
