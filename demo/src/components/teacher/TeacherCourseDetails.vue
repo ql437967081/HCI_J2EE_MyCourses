@@ -383,6 +383,8 @@ export default {
       // this.courseId = 5
       this.getHomeworkList2()
       this.getbeforeGrades()
+      alert('id' + this.coursetermid)
+      alert('id' + this.courseId)
     },
 
     termInfo () {
@@ -405,6 +407,7 @@ export default {
             number: courseclass.limitNum
           })
         }
+        alert('termInfo' + this.coursetermid)
         // alert(this.tableData.length)
         this.title = info.name + info.year + '年' + info.season + '学期'
         // alert(this.title)
