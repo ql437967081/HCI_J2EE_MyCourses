@@ -123,7 +123,7 @@ let router = new Router({
       }
     },
     {
-      path: '/teacher_course/:course_id/',
+      path: '/teacher_course/:course_id',
       name: 'teacher_course',
       component: TeacherCourse,
       meta: {
@@ -179,7 +179,7 @@ let router = new Router({
       }
     },
     {
-      path: '/TeacherCourseDetails',
+      path: '/teacher_course/:course_id/term_course/:publishedCourse_id',
       name: 'TeacherCourseDetails',
       component: TeacherCourseDetails,
       meta: {
