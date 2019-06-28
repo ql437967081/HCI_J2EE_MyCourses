@@ -49,8 +49,11 @@ public class VueTeacherCourseController {
         courseService.addCoursewares(id, coursewares);
     }
 
-    @PostMapping("/{id}/remove/{ware_id}")
-    public void removeCourseware(@PathVariable("id") long id, @PathVariable("ware_id") long wareId) {
+    @PostMapping("/remove")
+    @ResponseBody
+    public void removeCourseware(HttpServletRequest request) {
+        long wareId = Long.parseLong(request.getParameter("wareId"));
+        System.out.println("remove courseware: " + wareId);
         courseService.removeCourseware(wareId);
     }
 
