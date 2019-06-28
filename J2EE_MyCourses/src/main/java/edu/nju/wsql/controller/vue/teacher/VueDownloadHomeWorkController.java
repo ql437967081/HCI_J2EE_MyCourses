@@ -4,9 +4,7 @@ import edu.nju.wsql.service.CourseService;
 import edu.nju.wsql.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,10 +27,8 @@ public class VueDownloadHomeWorkController {
     private CourseService courseService;
     @Autowired
     private FileService fileService;
-    @GetMapping
-    @ResponseBody
-    public void downloadHomework(
-                                 long requestId,
+    @GetMapping("/{request_id}")
+    public void downloadHomework(@PathVariable("request_id") long requestId,
                                  HttpServletResponse response,
                                  HttpSession session) throws IOException {
         Map<String, String> locations = courseService.getHomeworkSubmitsByHomeworkRequestId(requestId);

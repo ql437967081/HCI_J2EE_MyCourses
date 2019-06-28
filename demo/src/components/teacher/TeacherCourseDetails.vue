@@ -1,29 +1,28 @@
 <template>
   <el-container style="height: 590px; border: 1px solid #eee">
     <el-aside width="200px" class="el-aside">
-      <el-menu :default-openeds="['/student_course']" default-active="/student_course/course_id" style="height: 588px">
-        <el-link href="/#/student_main">
-          <el-menu-item index="/student_main">
+      <el-menu :default-openeds="['/teacher_course']" default-active="/teacher_courses/courseId" style="height: 588px">
+        <el-link href="/#/teacher_main">
+          <el-menu-item index="/teacher_main">
             <template slot="title">
-              <i class="el-icon-s-home"></i>
+              <i class="el-icon-s-home" style="color: grey"></i>
               <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">主页</i>
             </template>
           </el-menu-item>
         </el-link>
-        <el-submenu index="/student_course">
+
+        <el-submenu index="/teacher_course">
           <template slot="title">
-            <el-link href="/#/student_course">
-              <i class="el-icon-menu"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">课程</i>
-            </el-link>
+            <i class="el-icon-menu"></i>
+            <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">我的课程</i>
           </template>
           <el-menu-item-group v-loading="loading">
-            <el-menu-item v-for="course in tableData" v-if="course.condition" index="/student_course/course_id">
-              <el-link :href="'/#/student_course/' + course.link">
-                <i v-if="course.link == selectCourseId" style="color: #409EFF; font-size: 12px; font-style: normal;">
-                  {{course.course}}
+            <el-menu-item index="/teacher_courses/courseId" v-for="course in createdCourses">
+              <el-link :href="'/#/teacher_course/' + course.id">
+                <i v-if="course.id == createdCourseId" style="color: #409EFF; font-size: 15px; font-style: normal;">
+                  {{course.courseName}}
                 </i>
-                <i v-else style="font-size: 12px; font-style: normal;">{{course.course}}</i>
+                <i v-else style="font-size: 15px; font-style: normal;">{{course.courseName}}</i>
               </el-link>
             </el-menu-item>
           </el-menu-item-group>
@@ -190,18 +189,27 @@
                   <el-table
                     :data="tableData2"
                     border
-                    style="width: 100%"
                     height="285px"
                   >
                     <el-table-column
                       prop="title"
                       label="标题"
                       width="100">
+                      <template slot-scope="scope">
+                        <i v-if="scope.row.location" style="font-style: normal">
+                          <el-link :download="scope.row.title" target="_blank" @click="handleClick(scope.row)">
+                            {{scope.row.title}}
+                          </el-link>
+                        </i>
+                        <i v-else style="font-style: normal">
+                          {{scope.row.title}}
+                        </i>
+                      </template>
                     </el-table-column>
                     <el-table-column
                       prop="content"
                       label="内容"
-                      width="150">
+                      width="250">
                     </el-table-column>
                     <el-table-column
                       prop="date"
@@ -211,23 +219,25 @@
                     <el-table-column
                       prop="size"
                       label="大小限制"
-                      width="120">
+                      width="70">
                     </el-table-column>
                     <el-table-column
                       prop="type"
                       label="文件类型"
-                      width="100">
+                      width="63">
                     </el-table-column>
                     <el-table-column
                       prop="zip"
                       label="提交人数"
-                      width="120">
+                      width="70">
                     </el-table-column>
                     <el-table-column
                       label="下载作业"
-                      style="width: 100%"
+                      width="100"
                     >
                       <template slot-scope="scope">
+                        <form :id="scope.row.requestid" method="get" target="_blank"
+                              :action="'http://localhost:8080/vue/teacher/downloadhomework/' + scope.row.requestid"></form>
                         <el-button @click="handleClick(scope.row)" type="text" size="small">下载</el-button>
                       </template>
                     </el-table-column>
@@ -238,9 +248,9 @@
                 <span slot="label"><i class="el-icon-s-flag"></i> 发布成绩</span>
                   <el-card>
                       <el-col :span = 16>
-                        <el-form :model="form" ref="form" label-width="100px" size="mini" style="height: 280px">
+                        <el-form :model="form2" ref="form2" label-width="100px" size="mini" style="height: 280px">
                           <el-form-item label="类型" prop="type">
-                            <el-select v-model="form.type" placeholder="请选择" style="float: left">
+                            <el-select v-model="form2.type" placeholder="请选择" style="float: left">
                               <el-option
                                 v-for="item in option1s"
                                 :key="item.value"
@@ -250,10 +260,10 @@
                             </el-select>
                           </el-form-item>
                           <el-form-item label="备注" prop="remark">
-                            <el-input type="textarea" v-model="form.remark" style="width: 80% ;float: left"></el-input>
+                            <el-input type="textarea" v-model="form2.remark" style="width: 80% ;float: left"></el-input>
                           </el-form-item>
                           <el-form-item label="是否公开" prop="public">
-                            <el-select v-model="form.public" placeholder="请选择" style="float: left">
+                            <el-select v-model="form2.public" placeholder="请选择" style="float: left">
                               <el-option
                                 v-for="item in option2s"
                                 :key="item.value"
@@ -281,7 +291,7 @@
                             </el-upload>
                           </el-form-item>
                           <el-form-item label="文件类型" prop="value">
-                            <el-select v-model="form.value" placeholder="请选择" style="float: left">
+                            <el-select v-model="form2.value" placeholder="请选择" style="float: left">
                               <el-option
                                 v-for="item in option2s"
                                 :key="item.value"
@@ -291,15 +301,15 @@
                             </el-select>
                           </el-form-item>
                           <el-form-item>
-                            <el-button type="primary" @click="onSubmit" style="float: left">立即发布</el-button>
-                            <el-button @click="resetForm('form')" style="float: left">重置</el-button>
+                            <el-button type="primary" @click="onSubmit2" style="float: left">立即发布</el-button>
+                            <el-button @click="resetForm('form2')" style="float: left">重置</el-button>
                           </el-form-item>
                         </el-form>
                       </el-col>
                     <el-col :span = 8>
                       <div style=" font-weight: bolder; margin-bottom: 20px">{{gradetitle}}</div>
                       <el-table
-                        :data="tableData"
+                        :data="tableData3"
                         border
                         height="260px"
                       >
@@ -353,6 +363,8 @@ export default {
       if (an) {
         this.activeName = an
       }
+
+      this.getMyCreatedCourses()
       // terminfo
       this.termInfo()
 
@@ -365,6 +377,12 @@ export default {
       // 方便测试，之后要删除
       this.courseId = 5
       this.getHomeworkList()
+
+      this.courseId = this.$route.params.couseId
+      // 方便测试，之后要删除
+      this.courseId = 5
+      this.getHomeworkList2()
+      this.getbeforeGrades()
     },
 
     termInfo () {
@@ -387,9 +405,9 @@ export default {
             number: courseclass.limitNum
           })
         }
-        alert(this.tableData.length)
+        // alert(this.tableData.length)
         this.title = info.name + info.year + '年' + info.season + '学期'
-        alert(this.title)
+        // alert(this.title)
         this.opinion.push('本科生')
         this.opinion.push('研究生')
         this.opinion.push('博士生')
@@ -442,6 +460,42 @@ export default {
           center: ['38%', '50%'],
           data: this.opinionData
         }]
+      })
+    },
+    // 群发邮件
+    submitForm (formName) {
+      this.$refs[formName].validate((valid) => {
+        const loading = getLoading(this)
+        if (valid) {
+          // alert(this.dynamicValidateForm.title)
+          // alert(this.dynamicValidateForm.content)
+          this.$axios({
+            method: 'get',
+            url: 'http://localhost:8080/vue/teacher/email',
+            params: {
+              id: this.courseId,
+              title: this.dynamicValidateForm.title,
+              content: this.dynamicValidateForm.content
+            } }).then(function (res) {
+            loading.close()
+            this.$message.success('邮件发送成功！')
+            this.resetForm('dynamicValidateForm')
+          }.bind(this)).catch(function (err) {
+            console.log(err)
+            if (err.response.status === 401) {
+              this.$router.push('/login_register')
+            } else if (err.response.status === 402) {
+              this.$message.error('您未选择此课程')
+              this.$router.go(-1)
+            } else if (err.response.status === 403) {
+              this.$message.error('课程作业有误')
+              this.$router.go(-1)
+            }
+          }.bind(this))
+        } else {
+          console.log('error submit!!')
+          return false
+        }
       })
     },
     onSubmit () {
@@ -515,7 +569,7 @@ export default {
             title: homework.title,
             content: homework.content,
             date: homework.ddl,
-            size: homework.fileMaxSize,
+            size: homework.fileMaxSize + 'MB',
             type: homework.fileType,
             zip: homework.submitNum,
             requestid: homework.id
@@ -541,21 +595,49 @@ export default {
       })
     },
     handleClick (row) {
-      alert(row.requestid)
+      // alert(row.requestid)
+      document.getElementById('' + row.requestid).submit()
+    },
+    // lauchgrades
+    handleAvatarChange (file) {
+      this.imageUrl = URL.createObjectURL(file.raw)
+    },
+    getHomeworkList2 () {
+      // alert(this.courseId)
       const loading = getLoading(this)
       this.$axios({
         method: 'get',
-        url: 'http://localhost:8080/vue/teacher/downloadhomework',
+        url: 'http://localhost:8080/vue/teacher/coursehomework',
         params: {
-          requestId: row.requestid
+          id: this.courseId
         }
       }).then(function (res) {
         loading.close()
         const info = res.data
+        let index = 3
+        let list = info.homeworkBeans
+        for (let homework of list) {
+          console.log(homework)
+          this.option1s.push({
+            value: '选项' + index,
+            label: homework.title,
+            id: homework.id
+          })
+          index++
+        }
+        let list2 = info.gradeBeans
+        for (let grade of list2) {
+          console.log(grade)
+          this.tableData3.push({
+            file: grade.name,
+            remarks: grade.remark,
+            ispublic: grade.open
+          })
+        }
         if (info) {
-          this.$message.success('作业下载成功！')
+          this.$message.success('作业获取成功！')
         } else {
-          this.$message.error('作业下载失败')
+          this.$message.error('作业未发布')
         }
       }.bind(this)).catch(function (err) {
         console.log(err)
@@ -570,6 +652,120 @@ export default {
           this.$router.go(-1)
         }
       })
+    },
+    getbeforeGrades () {
+      const loading = getLoading(this)
+      this.$axios({
+        method: 'get',
+        url: 'http://localhost:8080/vue/teacher/coursehomework',
+        params: {
+          id: this.courseId
+        }
+      }).then(function (res) {
+        loading.close()
+        const info = res.data
+        let list = info.gradeBeans
+        for (let grade of list) {
+          console.log(grade)
+          this.tableData3.push({
+            file: grade.name,
+            remarks: grade.remark,
+            ispublic: grade.open
+          })
+        }
+        if (info) {
+          this.$message.success('过往成绩一览！')
+        } else {
+          this.$message.error('过往成绩失败')
+        }
+      }.bind(this)).catch(function (err) {
+        console.log(err)
+        loading.close()
+        if (err.response.status === 401) {
+          this.$router.push('/login_register')
+        } else if (err.response.status === 402) {
+          this.$message.error('您未选择此课程')
+          this.$router.go(-1)
+        } else if (err.response.status === 403) {
+          this.$message.error('课程作业有误')
+          this.$router.go(-1)
+        }
+      })
+    },
+    beforeUpload (file) {
+      this.sheet = file
+      this.$message.success('成绩上传成功！')
+    },
+    onSubmit2 () {
+      this.$confirm('确定发布这次成绩吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const loading = getLoading(this)
+        let formData = new FormData()
+        formData.append('sheet', this.sheet)
+        formData.append('id', this.courseId)
+        formData.append('project', this.form2.type)
+        formData.append('remark', this.form2.remark)
+        formData.append('open', this.form2.public)
+        this.$axios({
+          method: 'post',
+          url: 'http://localhost:8080/vue/teacher/lauchgrades',
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          },
+          data: formData
+        }).then(function (res) {
+          loading.close()
+          const info = res.data
+          if (info) {
+            this.$message.success('成绩发布成功！')
+            this.resetForm('form2')
+            this.imageUrl = null
+          } else {
+            this.$message.error('成绩发布失败')
+            this.resetForm('form2')
+            this.imageUrl = null
+          }
+        }.bind(this)).catch(function (err) {
+          console.log(err)
+          loading.close()
+          if (err.response.status === 401) {
+            this.$router.push('/login_register')
+          } else if (err.response.status === 402) {
+            this.$message.error('您未选择此课程')
+            this.$router.go(-1)
+          } else if (err.response.status === 403) {
+            this.$message.error('课程作业有误')
+            this.$router.go(-1)
+          }
+        }.bind(this))
+      }).catch(() => {
+        this.$message('已取消提交')
+      })
+    },
+
+    getMyCreatedCourses () {
+      this.$axios({
+        method: 'get',
+        url: 'http://localhost:8080/vue/teacher/course'
+      }).then(function (res) {
+        this.loading = false
+        const info = res.data
+        console.log(info)
+        for (let key in info) {
+          this.createdCourses.push({
+            id: key,
+            courseName: info[key]
+          })
+        }
+      }.bind(this)).catch(function (err) {
+        console.log(err)
+        if (err.response.status === 401) {
+          this.$router.push('/login_register')
+        }
+      }.bind(this))
     }
   },
   watch: {
@@ -633,6 +829,7 @@ export default {
         label: '.java'
       }],
       courseId: '',
+
       // sendemails
       dynamicValidateForm: {
         content: '',
@@ -676,7 +873,52 @@ export default {
       }],
 
       // lauchGrades
-      gradetitle: '以往成绩表'
+      gradetitle: '以往成绩表',
+      tableData3: [{
+        file: '作业一',
+        remarks: '作业一部分成绩',
+        ispublic: '否'
+      }, {
+        file: '作业一',
+        remarks: '作业一部分成绩',
+        ispublic: '否'
+      }, {
+        file: '作业一',
+        remarks: '作业一部分成绩',
+        ispublic: '否'
+      }, {
+        file: '作业一',
+        remarks: '作业一部分成绩',
+        ispublic: '否'
+      }],
+      form2: {
+        type: '',
+        remark: '',
+        public: '',
+        size: '',
+        value: ''
+      },
+      option1s: [{
+        value: '选项1',
+        label: '考试',
+        id: '100000'
+      }, {
+        value: '选项2',
+        label: '作业',
+        id: '10000000'
+      }],
+      option2s: [{
+        value: '选项1',
+        label: '是'
+      }, {
+        value: '选项2',
+        label: '否'
+      }],
+      sheet: null,
+      imageUrl: '',
+
+      // 获得侧边栏
+      createdCourses: []
     }
   }
 }
