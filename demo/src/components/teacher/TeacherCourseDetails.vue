@@ -356,6 +356,7 @@ export default {
   },
   methods: {
     init () {
+      this.getInfo()
       this.coursetermid = this.$route.params.publishedCourse_id
       // 方便测试，之后要删除
       // this.coursetermid = 5
@@ -765,6 +766,21 @@ export default {
         }
       }.bind(this)).catch(function (err) {
         console.log(err)
+        if (err.response.status === 401) {
+          this.$router.push('/login_register')
+        }
+      }.bind(this))
+    },
+
+    getInfo () {
+      this.$axios({
+        method: 'get',
+        url: 'http://localhost:8080/vue/teacher/info'
+      }).then(function (res) {
+        const info = res.data
+        this.name = info.name
+        this.url = 'http://localhost:8080' + info.portrait
+      }.bind(this)).catch(function (err) {
         if (err.response.status === 401) {
           this.$router.push('/login_register')
         }
