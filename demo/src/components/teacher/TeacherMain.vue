@@ -195,8 +195,9 @@
             data: formData
           }).then(function (res) {
             const info = res.data
-            if (info) {
+            if (info >= 0) {
               this.$message.success('课程创建成功！')
+              this.$router.push('/teaceher_course/'+ info)
             } else {
               this.$message.error('课程创建失败！')
             }

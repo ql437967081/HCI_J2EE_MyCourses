@@ -76,8 +76,9 @@
                       <el-link :download="scope.row.name" target="_blank" :href="'http://localhost:8080' + scope.row.location">
                         {{scope.row.name}}
                       </el-link>
-                      <el-button type="text" v-on:click="handleRemove(scope.row.id)">&nbsp;&nbsp;删除</el-button>&nbsp;&nbsp;&nbsp;&nbsp;
                       </i>
+                      <i v-else> {{scope.row.name}}</i>
+                      <el-button type="text" v-on:click="handleRemove(scope.row)">&nbsp;&nbsp;删除</el-button>&nbsp;&nbsp;&nbsp;&nbsp;
                     </template>
                   </el-table-column>
                 </el-table>
@@ -218,34 +219,38 @@
             }
           }.bind(this))
         },
-        handleRemove(id) {
+        handleRemove(courseware) {
           this.$confirm('确定删除所选课件吗？', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            let wareId = id
-            this.$axios({
-              method: 'post',
-              url: 'http://localhost:8080/vue/teacher/course/' + this.createdCourseId + '/remove/' + wareId,
-              params: {
-                id: wareId
-              }
-            }).then(function (res) {
-              this.$router.push('/teacher_course/'+this.createdCourseId)
-            }.bind(this)).catch(function (err) {
-              console.log(err)
-              if (err.response.status === 401) {
-                this.$router.push('/login_register')
-              } else if (err.response.status === 402) {
-                this.$message.error('您未选择此课件')
-                this.$router.go(-1)
-              } else if (err.response.status === 403) {
-                this.$message.error('课件移除有误')
-                this.$router.go(-1)
-              }
-            }.bind(this))
-            this.coursewares.splice(index, 1)
+            if(courseware.status === 'success') {
+              let wareId = courseware.id
+              this.$axios({
+                method: 'post',
+                url: 'http://localhost:8080/vue/teacher/course/' + this.createdCourseId + '/remove/' + wareId,
+                params: {
+                  id: wareId
+                }
+              }).then(function (res) {
+                this.$router.push('/teacher_course/'+this.createdCourseId)
+              }.bind(this)).catch(function (err) {
+                console.log(err)
+                if (err.response.status === 401) {
+                  this.$router.push('/login_register')
+                } else if (err.response.status === 402) {
+                  this.$message.error('您未选择此课件')
+                  this.$router.go(-1)
+                } else if (err.response.status === 403) {
+                  this.$message.error('课件移除有误')
+                  this.$router.go(-1)
+                }
+              }.bind(this))
+            }
+            else {
+              this.coursewares.remove(courseware)
+            }
           }).catch(() => {
             this.$message('已取消删除')
           })
