@@ -78,7 +78,7 @@
                       </el-link>
                       </i>
                       <i v-else> {{scope.row.name}}</i>
-                      <el-button type="text" v-on:click="handleRemove(scope.row)">&nbsp;&nbsp;删除</el-button>&nbsp;&nbsp;&nbsp;&nbsp;
+                      <el-button type="text" v-on:click="handleRemove(scope.row.index, scope.row)">&nbsp;&nbsp;删除</el-button>&nbsp;&nbsp;&nbsp;&nbsp;
                     </template>
                   </el-table-column>
                 </el-table>
@@ -119,6 +119,7 @@
           this.createdCourses = []
           this.coursewares = []
           this.currentCourse = {}
+          this.fileList = []
           this.publishedCourses = []
           this.getInfo()
           this.getMyCreatedCourses()
@@ -219,12 +220,13 @@
             }
           }.bind(this))
         },
-        handleRemove(courseware) {
+        handleRemove(index, courseware) {
           this.$confirm('确定删除所选课件吗？', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
+            console.log(courseware)
             if(courseware.status === 'success') {
               let wareId = courseware.id
               this.$axios({
@@ -248,18 +250,17 @@
                 }
               }.bind(this))
             }
-            else {
-              this.coursewares.remove(courseware)
-            }
-          }).catch(() => {
-            this.$message('已取消删除')
+            this.coursewares.splice(index, 1)
+          }).catch(function (err) {
+            console.log(err)
+            this.$message.info('已取消删除')
           })
         },
         beforeUpload (file) {
           this.fileList.push(file)
           this.coursewares.push({
             name: file.name,
-            status: 'fail'
+            status: ''
           })
           console.log(file)
           console.log(this.coursewares)
