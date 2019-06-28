@@ -356,9 +356,9 @@ export default {
   },
   methods: {
     init () {
-      this.coursetermid = this.$route.params.couseId
+      this.coursetermid = this.$route.params.publishedCourse_id
       // 方便测试，之后要删除
-      this.coursetermid = 5
+      // this.coursetermid = 5
       const an = this.$route.query.activeName
       if (an) {
         this.activeName = an
@@ -369,18 +369,18 @@ export default {
       this.termInfo()
 
       // sendmails
-      this.courseId = this.$route.params.course_id
+      this.courseId = this.$route.params.publishedCourse_id
       this.teacherId = this.$route.params.teacher_id
 
       // downloadhomework
-      this.courseId = this.$route.params.couseId
+      this.courseId = this.$route.params.publishedCourse_id
       // 方便测试，之后要删除
-      this.courseId = 5
+      // this.courseId = 5
       this.getHomeworkList()
 
-      this.courseId = this.$route.params.couseId
+      this.courseId = this.$route.params.publishedCourse_id
       // 方便测试，之后要删除
-      this.courseId = 5
+      // this.courseId = 5
       this.getHomeworkList2()
       this.getbeforeGrades()
     },
