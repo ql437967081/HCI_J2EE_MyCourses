@@ -26,6 +26,6 @@ public class VueTeacherGetCourseHomeworkController {
     public CourseHomeworkListBean receiveHomework(HttpServletRequest request, HttpSession session) {
         System.out.println("recieveHomework");
         long id = Long.parseLong(request.getParameter("id"));
-        return courseService.getHomeworkList(id, false);
+        return courseService.getHomeworkList(id, true);
     }
 }
