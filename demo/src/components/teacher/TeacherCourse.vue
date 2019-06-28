@@ -56,8 +56,8 @@
 
       <el-main>
         <el-col :span="2"><br></el-col>
-        <el-col :span="16">
-          <el-card class="box-card" style="width: 600px">
+        <el-col :span="10">
+          <el-card class="box-card" style="width: 500px">
             <h2>{{ currentCourse.name }}</h2>
             <span>创建者：{{currentCourse.creator}}</span><br><br>
             <el-form align="center" label-width="80px">
@@ -90,7 +90,7 @@
         <el-col :span="6">
           <el-card class="box-card" style="width: 100%">
             <el-table :data="publishedCourses" border style="width: 80%" align="center" header-algin="center">
-              <el-table-column prop="term" label="学期" width="308">
+              <el-table-column prop="term" label="学期" width="218">
                 <template slot-scope="scope">
                   <el-link :href="'/#/teacher_course/' + createdCourseId + '/term_course/' + scope.row.id">
                     {{scope.row.term}}
@@ -100,7 +100,7 @@
             </el-table>
           </el-card>
         </el-col>
-        <el-col :span="2"><br></el-col>
+        <el-col :span="6"><br></el-col>
       </el-main>
     </el-container>
   </el-container>
@@ -262,6 +262,7 @@
             status: 'fail'
           })
           console.log(file)
+          console.log(this.coursewares)
         }
       },
       watch: {

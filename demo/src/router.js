@@ -131,14 +131,6 @@ let router = new Router({
       }
     },
     {
-      path: '/teacher_',
-      name: 'teacher_info',
-      component: TeacherInfo,
-      meta: {
-        title: 'MyCourses：个人信息'
-      }
-    },
-    {
       path: '/TeacherSendMails',
       name: 'TeacherSendMails',
       component: TeacherSendMails,

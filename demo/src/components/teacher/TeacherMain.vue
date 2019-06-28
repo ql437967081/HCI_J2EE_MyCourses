@@ -85,24 +85,20 @@
               <el-tab-pane name="second">
                 <span slot="label">&nbsp;<i class="el-icon-s-order"></i> 发布课程&nbsp;</span>
                 <el-card class="box-card" style="width: 100%">
-                  <el-form ref="publishCourse" :model="publishCourse" label-width="80px">
+                  <el-form label-width="80px">
                     <el-form-item style="text-align: left" label="学期">
                       <el-date-picker v-model="year" type="year" placeholder="选择年份"></el-date-picker>
                       <span>&nbsp;年</span>
                       <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                      <el-dropdown split-button="" @command="chooseSeason">{{chosenSeason}}
-                        <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item v-for="season in seasons" :command="season">{{season}}</el-dropdown-item>
-                        </el-dropdown-menu>
-                      </el-dropdown>
+                      <el-select v-model="chosenSeason" placeholder="选择季度">
+                        <el-option v-for="season in seasons" :value="season" :label="season"></el-option>
+                      </el-select>
                       <span>&nbsp;学期</span>
                     </el-form-item>
                     <el-form-item style="text-align: left" label="课程">
-                      <el-dropdown style="margin-left: auto" split-button="" @command="chooseCourse">{{chosenCourse}}
-                        <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item v-for="course in createdCourses" :command="course.courseName">{{course.courseName}}</el-dropdown-item>
-                        </el-dropdown-menu>
-                      </el-dropdown>
+                      <el-select v-model="chosenCourse" placeholder="选择课程">
+                        <el-option v-for="course in createdCourses" :value="course.courseName" :label="course.courseName"></el-option>
+                      </el-select>
                     </el-form-item>
                     <el-form-item style="text-align: left" label="班次">
                       <el-button @click="addClass">添加班级</el-button>
@@ -111,7 +107,7 @@
                       style="text-align: left"
                       v-for="(Class, index) in classes"
                       :label="'班号' + (index+1)"
-                      :prop="'domains.' + index + '.limit'">
+                      :prop="'classes.' + index + '.limit'">
                       <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;人数&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                       <el-input-number :min="1" v-model="Class.limit"></el-input-number><span>&nbsp;&nbsp;</span><el-button @click.prevent="removeClass($index)">删除</el-button>
                     </el-form-item>
@@ -164,7 +160,6 @@
           const info = res.data
           console.log(info)
           for(let key in info){
-            console.log(key + ' ' + info[key])
             this.createdCourses.push({
               id: key,
               courseName: info[key]
@@ -197,7 +192,7 @@
             const info = res.data
             if (info >= 0) {
               this.$message.success('课程创建成功！')
-              this.$router.push('/teaceher_course/'+ info)
+              this.$router.push('/teacher_course/'+ info)
             } else {
               this.$message.error('课程创建失败！')
             }
@@ -219,36 +214,49 @@
         }
       },
       publishCourse() {
+        let date = new Date(this.year);
+        let year = date.getFullYear()
 
-        // this.$axios({
-        //   method: 'get',
-        //   url: 'http://localhost:8080/vue/teacher/course/publish_course',
-        //   params: {
-        //
-        //
-        //   }
-        // }).then(function (res) {
-        //   loading.close()
-        //   const info = res.data
-        //   if (info) {
-        //     this.$message.success('课程发布成功！')
-        //     this.index = 0
-        //   } else {
-        //     this.$message.error('课程发布失败！')
-        //   }
-        // }.bind(this)).catch(function (err) {
-        //   console.log(err)
-        //   loading.close()
-        //   if (err.response.status === 401) {
-        //     this.$router.push('/login_register')
-        //   } else if (err.response.status === 402) {
-        //     this.$message.error('您未选择此课程')
-        //     this.$router.go(-1)
-        //   } else if (err.response.status === 403) {
-        //     this.$message.error('课程发布有误')
-        //     this.$router.go(-1)
-        //   }
-        // }.bind(this))
+        console.log(year)
+        let formdata = new FormData()
+        formdata.append("year", year)
+        formdata.append("season", this.chosenSeason)
+        let courseId = ''
+        for(let course of this.createdCourses) {
+          if(course.courseName === this.chosenCourse) {
+            courseId = course.id
+            break
+          }
+        }
+        formdata.append("course", courseId)
+        for(let c of this.classes) {
+          formdata.append(""+c.classId, c.limit)
+        }
+        this.$axios({
+          method: 'post',
+          url: 'http://localhost:8080/vue/teacher/course/publish_course',
+          data: formdata
+        }).then(function (res) {
+          const info = res.data
+          if (info >= 0) {
+            this.$message.success('课程发布成功！')
+            this.$router.push('/teacher_course/'+ courseId + '/term_course/' + info)
+            this.index = 0
+          } else {
+            this.$message.error('课程发布失败！')
+          }
+        }.bind(this)).catch(function (err) {
+          console.log(err)
+          if (err.response.status === 401) {
+            this.$router.push('/login_register')
+          } else if (err.response.status === 402) {
+            this.$message.error('您未选择此课程')
+            this.$router.go(-1)
+          } else if (err.response.status === 403) {
+            this.$message.error('课程发布有误')
+            this.$router.go(-1)
+          }
+        }.bind(this))
       },
       handleRemove(index) {
         this.fileList.splice(index, 1)
@@ -266,12 +274,6 @@
       removeClass(index) {
         this.classes.splice(index, 1)
       },
-      chooseSeason(command) {
-        this.chosenSeason = command
-      },
-      chooseCourse(command) {
-        this.chosenCourse = command
-      }
     },
     data() {
       return {
@@ -284,12 +286,10 @@
         year: '',
         season: '',
         seasons: ['春季', '夏季', '秋季', '冬季'],
-        chosenSeason: '选择季度',
+        chosenSeason: '',
         courseName: '',
-        chosenCourse: '选择课程',
-        course: '',
+        chosenCourse: '',
         createdCourses: [],
-        publishCourse: {},
         classes:[],
         fileList: []
       }
