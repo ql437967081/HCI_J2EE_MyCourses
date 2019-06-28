@@ -1,7 +1,7 @@
 <template>
   <el-container style="height: 590px; border: 1px solid #eee">
     <el-aside width="200px" class="el-aside">
-      <el-menu :default-openeds="['/teacher_course']" default-active="/teacher_courses/courseId" style="height: 588px">
+      <el-menu :default-openeds="['/teacher_course']" default-active="/teacher_course" style="height: 588px">
         <el-link href="/#/teacher_main">
           <el-menu-item index="/teacher_main">
             <template slot="title">
@@ -16,7 +16,7 @@
             <i class="el-icon-menu"></i>
             <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 15px">我的课程</i>
           </template>
-          <el-submenu v-for="course in createdCourses" index="/teacher_courses/courseId">
+          <el-submenu v-for="course in createdCourses" :index="'/teacher_courses/' + course.id">
             <template slot="title">
               <el-link :href="'/#/teacher_course/' + course.id">
                 <i v-if="course.id == createdCourseId" style="color: #409EFF; font-size: 12px; font-style: normal;">
@@ -26,23 +26,13 @@
               </el-link>
             </template>
             <el-menu-item-group v-loading="loading">
-              <el-menu-item v-for="publishedCourse in publishedCourses" index="/teacher_term_course">
+              <el-menu-item v-for="publishedCourse in course.terms" :index="'/teacher_term_course/' + publishedCourse.id">
                 <el-link :href="'/#/teacher_course/' + course.id + '/term_course/' + publishedCourse.id">
-                    {{publishedCourse.courseName}}
+                  <i style="font-size: 12px; font-style: normal;">{{publishedCourse.term}}</i>
                 </el-link>
               </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
-          <!--<el-menu-item-group v-loading="loading">-->
-            <!--<el-menu-item index="/teacher_courses/courseId" v-for="course in createdCourses">-->
-              <!--<el-link :href="'/#/teacher_course/' + course.id">-->
-                <!--<i v-if="course.id == createdCourseId" style="color: #409EFF; font-size: 12px; font-style: normal;">-->
-                  <!--{{course.courseName}}-->
-                <!--</i>-->
-                <!--<i v-else style="font-size: 15px; font-style: normal;">{{course.courseName}}</i>-->
-              <!--</el-link>-->
-            <!--</el-menu-item>-->
-          <!--</el-menu-item-group>-->
         </el-submenu>
       </el-menu>
     </el-aside>
@@ -163,13 +153,15 @@
           }).then(function (res) {
             this.loading = false
             const info = res.data
-            console.log(info)
             for(let key in info){
               this.createdCourses.push({
                 id: key,
-                courseName: info[key]
+                courseName: info[key],
+                terms : []
               })
             }
+            this.getTerms()
+            console.log(this.createdCourses)
           }.bind(this)).catch(function (err) {
             console.log(err)
             if (err.response.status === 401) {
@@ -177,10 +169,26 @@
             }
           }.bind(this))
         },
+        getTerms() {
+          for(let course of this.createdCourses) {
+            this.$axios({
+              method: 'get',
+              url: 'http://localhost:8080/vue/teacher/course/'+ course.id
+            }).then(function (res) {
+              const info = res.data
+              course.terms = info.terms
+            }.bind(this)).catch(function (err) {
+              console.log(err)
+              if (err.response.status === 401) {
+                this.$router.push('/login_register')
+              }
+            }.bind(this))
+          }
+        },
         getCourse() {
           this.$axios({
             method: 'get',
-            url: 'http://localhost:8080/vue/teacher/course/'+this.createdCourseId
+            url: 'http://localhost:8080/vue/teacher/course/'+ this.createdCourseId
           }).then(function (res) {
              this.loading = false
              this.currentCourse = res.data
@@ -198,7 +206,6 @@
                this.$router.push('/teacher_main')
              }
              this.coursewares = this.currentCourse.coursewares
-             console.log(this.coursewares)
              this.fileList = []
              this.publishedCourses = this.currentCourse.terms
              console.log(this.publishedCourses)

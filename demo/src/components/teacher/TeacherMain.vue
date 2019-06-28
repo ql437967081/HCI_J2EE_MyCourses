@@ -16,30 +16,20 @@
             <i class="el-icon-menu"></i>
             <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 15px">我的课程</i>
           </template>
-          <el-submenu v-for="course in createdCourses" index="/teacher_courses/courseId">
+          <el-submenu v-for="course in createdCourses" :index="'/teacher_courses/' + course.id">
             <template slot="title">
               <el-link :href="'/#/teacher_course/' + course.id">
-                <i v-if="course.id == createdCourseId" style="color: #409EFF; font-size: 12px; font-style: normal;">
-                  {{course.courseName}}
-                </i>
-                <i v-else style="font-size: 12px; font-style: normal;">{{course.courseName}}</i>
+                <i style="font-style: normal; font-size: 12px">{{course.courseName}}</i>
               </el-link>
             </template>
             <el-menu-item-group v-loading="loading">
-              <el-menu-item v-for="publishedCourse in publishedCourses" index="/teacher_term_course">
+              <el-menu-item v-for="publishedCourse in course.terms" :index="'/teacher_term_course/' + publishedCourse.id">
                 <el-link :href="'/#/teacher_course/' + course.id + '/term_course/' + publishedCourse.id">
-                  {{publishedCourse.courseName}}
+                  <i style="font-style: normal; font-size: 12px">{{publishedCourse.term}}</i>
                 </el-link>
               </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
-          <!--<el-menu-item-group v-loading="loading">-->
-            <!--<el-menu-item index="/teacher_courses/courseId" v-for="course in createdCourses">-->
-              <!--<el-link :href="'/#/teacher_course/' + course.id">-->
-                <!--{{course.courseName}}-->
-              <!--</el-link>-->
-            <!--</el-menu-item>-->
-          <!--</el-menu-item-group>-->
         </el-submenu>
       </el-menu>
     </el-aside>
@@ -178,13 +168,14 @@
         }).then(function (res) {
           this.loading = false
           const info = res.data
-          console.log(info)
           for(let key in info){
             this.createdCourses.push({
               id: key,
-              courseName: info[key]
+              courseName: info[key],
+              terms : []
             })
           }
+          this.getCourse()
           console.log(this.createdCourses)
         }.bind(this)).catch(function (err) {
           console.log(err)
@@ -192,6 +183,22 @@
             this.$router.push('/login_register')
           }
         }.bind(this))
+      },
+      getCourse() {
+        for(let course of this.createdCourses) {
+          this.$axios({
+            method: 'get',
+            url: 'http://localhost:8080/vue/teacher/course/'+ course.id
+          }).then(function (res) {
+            const info = res.data
+            course.terms = info.terms
+          }.bind(this)).catch(function (err) {
+            console.log(err)
+            if (err.response.status === 401) {
+              this.$router.push('/login_register')
+            }
+          }.bind(this))
+        }
       },
       createCourse() {
         if(this.courseName !== '' || this.courseName !== null) {
@@ -304,13 +311,13 @@
         activeName: 'first',
         index: 0,
         year: '',
-        season: '',
         seasons: ['春季', '夏季', '秋季', '冬季'],
         chosenSeason: '',
         courseName: '',
         chosenCourse: '',
         createdCourses: [],
         publishedCourses: [],
+        course : {},
         classes:[],
         fileList: []
       }
