@@ -10,6 +10,8 @@ import Logout from './components/Logout'
 import StudentCourse from './components/student/StudentCourse'
 import StudentCourseDetail from "./components/student/StudentCourseDetail";
 import StudentHomework from "./components/student/StudentHomework";
+import AdminMain from "./components/admin/AdminMain";
+import AdminStatistic from "./components/admin/AdminStatistic";
 
 Vue.use(Router)
 
@@ -95,6 +97,22 @@ let router = new Router({
       component: StudentHomework,
       meta: {
         title: '作业详情'
+      }
+    },
+    {
+      path: '/admin_main',
+      name: 'admin_main',
+      component: AdminMain,
+      meta: {
+        title: '我的主页'
+      }
+    },
+    {
+      path: '/admin_statistic',
+      name: 'admin_statistic',
+      component: AdminStatistic,
+      meta: {
+        title: '数据统计'
       }
     }
   ]
