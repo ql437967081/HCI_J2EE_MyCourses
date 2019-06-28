@@ -62,11 +62,10 @@
             <div><br></div>
             <div style="font-size: medium;">
               <!--{{this.course.term}}-->
-              2019年春季学期
-              班级：
+              {{season}}
               <!--{{this.course.classId}}-->
               &nbsp;&nbsp;
-              教师：匡宏宇
+              教师：{{teacher}}
               <!--{{this.course.teacher}}-->
             </div>
             <el-tabs v-model="activeName">
@@ -290,16 +289,16 @@
                               <!--<div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>-->
                             </el-upload>
                           </el-form-item>
-                          <el-form-item label="文件类型" prop="value">
-                            <el-select v-model="form2.value" placeholder="请选择" style="float: left">
-                              <el-option
-                                v-for="item in option2s"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                              </el-option>
-                            </el-select>
-                          </el-form-item>
+                          <!--<el-form-item label="文件类型" prop="value">-->
+                            <!--<el-select v-model="form2.value" placeholder="请选择" style="float: left">-->
+                              <!--<el-option-->
+                                <!--v-for="item in option2s"-->
+                                <!--:key="item.value"-->
+                                <!--:label="item.label"-->
+                                <!--:value="item.value">-->
+                              <!--</el-option>-->
+                            <!--</el-select>-->
+                          <!--</el-form-item>-->
                           <el-form-item>
                             <el-button type="primary" @click="onSubmit2" style="float: left">立即发布</el-button>
                             <el-button @click="resetForm('form2')" style="float: left">重置</el-button>
@@ -342,9 +341,9 @@
               </el-tab-pane>
             </el-tabs>
           </el-col>
-          <el-col :span="2">
-            <el-button type="danger" @click="open" >退课</el-button>
-          </el-col>
+          <!--<el-col :span="2">-->
+            <!--<el-button type="danger" @click="open" >退课</el-button>-->
+          <!--</el-col>-->
         </el-card>
       </el-main>
     </el-container>
@@ -411,9 +410,11 @@ export default {
             number: courseclass.limitNum
           })
         }
-        alert('termInfo' + this.coursetermid)
+        // alert('termInfo' + this.coursetermid)
         // alert(this.tableData.length)
         this.title = info.name + info.year + '年' + info.season + '学期'
+        this.season = info.year + '年' + info.season + '学期'
+        this.teacher = info.publisher
         // alert(this.title)
         this.opinion.push('本科生')
         this.opinion.push('研究生')
@@ -512,10 +513,10 @@ export default {
         type: 'warning'
       }).then(() => {
         const loading = getLoading(this)
-        // 这里为了测试方便
-        this.courseId = 5
-        console.log(this.form.date1)
-        console.log(this.form.date2)
+        // // 这里为了测试方便
+        // this.courseId = 5
+        // console.log(this.form.date1)
+        // console.log(this.form.date2)
         this.$axios({
           method: 'post',
           url: 'http://localhost:8080/vue/teacher/lauchhomework',
@@ -533,6 +534,8 @@ export default {
           if (info) {
             this.$message.success('作业发布成功！')
             this.resetForm('form')
+            this.getHomeworkList()
+            this.getHomeworkList2()
           } else {
             this.$message.error('作业发布失败')
             this.resetForm('form')
@@ -570,6 +573,7 @@ export default {
         loading.close()
         const info = res.data
         let list = info.homeworkBeans
+        this.tableData2 = []
         for (let homework of list) {
           console.log(homework)
           this.tableData2.push({
@@ -582,11 +586,11 @@ export default {
             requestid: homework.id
           })
         }
-        if (info) {
-          this.$message.success('作业获取成功！')
-        } else {
-          this.$message.error('作业未发布')
-        }
+        // if (info) {
+        //   this.$message.success('作业获取成功！')
+        // } else {
+        //   this.$message.error('作业未发布')
+        // }
       }.bind(this)).catch(function (err) {
         console.log(err)
         loading.close()
@@ -605,6 +609,7 @@ export default {
       // alert(row.requestid)
       document.getElementById('' + row.requestid).submit()
     },
+
     // lauchgrades
     handleAvatarChange (file) {
       this.imageUrl = URL.createObjectURL(file.raw)
@@ -623,6 +628,7 @@ export default {
         const info = res.data
         let index = 3
         let list = info.homeworkBeans
+        this.option1s = []
         for (let homework of list) {
           console.log(homework)
           this.option1s.push({
@@ -632,20 +638,20 @@ export default {
           })
           index++
         }
-        let list2 = info.gradeBeans
-        for (let grade of list2) {
-          console.log(grade)
-          this.tableData3.push({
-            file: grade.name,
-            remarks: grade.remark,
-            ispublic: grade.open
-          })
-        }
-        if (info) {
-          this.$message.success('作业获取成功！')
-        } else {
-          this.$message.error('作业未发布')
-        }
+        // let list2 = info.gradeBeans
+        // for (let grade of list2) {
+        //   console.log(grade)
+        //   this.tableData3.push({
+        //     file: grade.name,
+        //     remarks: grade.remark,
+        //     ispublic: grade.open
+        //   })
+        // }
+        // if (info) {
+        //   this.$message.success('作业获取成功！')
+        // } else {
+        //   this.$message.error('作业未发布')
+        // }
       }.bind(this)).catch(function (err) {
         console.log(err)
         loading.close()
@@ -661,7 +667,6 @@ export default {
       })
     },
     getbeforeGrades () {
-      alert("getbeforeGrade")
       const loading = getLoading(this)
       this.$axios({
         method: 'get',
@@ -670,14 +675,10 @@ export default {
           id: this.courseId
         }
       }).then(function (res) {
-        alert('调用成功')
         loading.close()
         const info = res.data
         let list = info.gradeBeans
-        alert("info")
-        console.log('成绩')
-        console.log(info)
-        alert('成绩' + list.length)
+        this.tableData3 = []
         for (let grade of list) {
           console.log(grade)
           this.tableData3.push({
@@ -687,11 +688,11 @@ export default {
             location: grade.location
           })
         }
-        if (info) {
-          this.$message.success('过往成绩一览！')
-        } else {
-          this.$message.error('过往成绩失败')
-        }
+        // if (info) {
+        //   this.$message.success('过往成绩一览！')
+        // } else {
+        //   this.$message.error('过往成绩失败')
+        // }
       }.bind(this)).catch(function (err) {
         console.log(err)
         loading.close()
@@ -736,6 +737,7 @@ export default {
           if (info) {
             this.$message.success('成绩发布成功！')
             this.resetForm('form2')
+            this.getbeforeGrades()
             this.imageUrl = null
           } else {
             this.$message.error('成绩发布失败')
@@ -806,21 +808,7 @@ export default {
   data () {
     return {
       // termInfo
-      tableData: [{
-        class: 1,
-        count: 3,
-        number: 120
-      },
-      {
-        class: 1,
-        count: 3,
-        number: 120
-      },
-      {
-        class: 1,
-        count: 3,
-        number: 120
-      }],
+      tableData: [],
       charts: '',
       opinion: [],
       opinionData: [],
@@ -903,23 +891,7 @@ export default {
 
       // lauchGrades
       gradetitle: '以往成绩表',
-      tableData3: [{
-        file: '作业一',
-        remarks: '作业一部分成绩',
-        ispublic: '否'
-      }, {
-        file: '作业一',
-        remarks: '作业一部分成绩',
-        ispublic: '否'
-      }, {
-        file: '作业一',
-        remarks: '作业一部分成绩',
-        ispublic: '否'
-      }, {
-        file: '作业一',
-        remarks: '作业一部分成绩',
-        ispublic: '否'
-      }],
+      tableData3: [],
       form2: {
         type: '',
         remark: '',
@@ -945,6 +917,8 @@ export default {
       }],
       sheet: null,
       imageUrl: '',
+      season: '',
+      teacher: '',
 
       // 获得侧边栏
       createdCourses: []
