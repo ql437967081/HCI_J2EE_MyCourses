@@ -23,7 +23,6 @@ public class VueStudentCoursesController {
     @GetMapping
     @ResponseBody
     public List<StudentTermCourseBean> getCourses(HttpServletRequest request, HttpSession session) {
-        request.setAttribute("info", studentCourseService.getAllCourses((String) session.getAttribute("login")));
         return studentCourseService.getAllCourses((String) session.getAttribute("login")).getTermCourseList();
     }
 }

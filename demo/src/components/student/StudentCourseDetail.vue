@@ -73,7 +73,6 @@
                 <span slot="label">&nbsp;<i class="el-icon-s-order"></i> 课件&nbsp;</span>
                 <el-card class="coursewares">
                   <el-table
-                    v-loading="loading"
                     :data="coursewares"
                     height="270px"
                     border>
@@ -101,7 +100,6 @@
                 <span slot="label">&nbsp;<i class="el-icon-message-solid"></i> 作业&nbsp;</span>
                 <el-card class="homework">
                   <el-table
-                    v-loading="loading"
                     :data="homework"
                     height="270px"
                     border>
@@ -146,7 +144,6 @@
                 <span slot="label">&nbsp;<i class="el-icon-s-flag"></i> 成绩&nbsp;</span>
                 <el-card class="grades">
                   <el-table
-                    v-loading="loading"
                     :data="grades"
                     height="270px"
                     border>
@@ -259,7 +256,6 @@ export default {
         method: 'get',
         url: 'http://localhost:8080/vue/student/courses'
       }).then(function (res) {
-        this.loading = false
         const info = res.data
         for (let course of info) {
           console.log(course)
@@ -321,7 +317,6 @@ export default {
       name: '',
       tableData: [],
       activeName: 'first',
-      loading: true,
       selectCourseId: 0,
       course: {
         name: '',

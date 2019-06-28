@@ -216,13 +216,17 @@ export default {
         type: 'warning'
       }).then(() => {
         const loading = getLoading(this)
+        let formData = new FormData()
+        formData.append('file', this.file)
+        formData.append('selectCourseId', this.selectCourseId)
+        formData.append('homeworkRequestId', this.homeworkRequestId)
         this.$axios({
           method: 'post',
           url: 'http://localhost:8080/vue/student/course_homework',
-          params: {
-            selectCourseId: this.selectCourseId,
-            homeworkRequestId: this.homeworkRequestId
-          }
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          },
+          data: formData
         }).then(function (res) {
           loading.close()
           const info = res.data
