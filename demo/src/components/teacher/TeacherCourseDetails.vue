@@ -318,6 +318,11 @@
                           label="成绩表"
                           width="98"
                         >
+                          <template slot-scope="scope">
+                            <el-link :href="'http://localhost:8080' + scope.row.location">
+                              {{scope.row.file}}
+                            </el-link>
+                          </template>
                         </el-table-column>
                         <el-table-column
                           prop="remarks"
@@ -384,8 +389,6 @@ export default {
       // this.courseId = 5
       this.getHomeworkList2()
       this.getbeforeGrades()
-      alert('id' + this.coursetermid)
-      alert('id' + this.courseId)
     },
 
     termInfo () {
@@ -658,6 +661,7 @@ export default {
       })
     },
     getbeforeGrades () {
+      alert("getbeforeGrade")
       const loading = getLoading(this)
       this.$axios({
         method: 'get',
@@ -666,15 +670,21 @@ export default {
           id: this.courseId
         }
       }).then(function (res) {
+        alert('调用成功')
         loading.close()
         const info = res.data
         let list = info.gradeBeans
+        alert("info")
+        console.log('成绩')
+        console.log(info)
+        alert('成绩' + list.length)
         for (let grade of list) {
           console.log(grade)
           this.tableData3.push({
             file: grade.name,
             remarks: grade.remark,
-            ispublic: grade.open
+            ispublic: grade.open,
+            location: grade.location
           })
         }
         if (info) {
