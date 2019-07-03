@@ -97,7 +97,7 @@
                 <el-card class="box-card" style="width: 100%">
                   <el-form label-width="80px">
                     <el-form-item style="text-align: left" label="学期">
-                      <el-date-picker v-model="year" type="year" placeholder="选择年份"></el-date-picker>
+                      <el-date-picker v-model="year" type="year" placeholder="选择年份" :picker-options="pickerOptionsStart"></el-date-picker>
                       <span>&nbsp;年</span>
                       <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                       <el-select v-model="chosenSeason" placeholder="选择季度">
@@ -317,9 +317,14 @@
         chosenCourse: '',
         createdCourses: [],
         publishedCourses: [],
-        course : {},
-        classes:[],
-        fileList: []
+        course: {},
+        classes: [],
+        fileList: [],
+        pickerOptionsStart: {
+          disabledDate(time) {
+            return time.getTime() < new Date(new Date().toLocaleDateString()).getTime();
+          }
+        }
       }
     }
   }
