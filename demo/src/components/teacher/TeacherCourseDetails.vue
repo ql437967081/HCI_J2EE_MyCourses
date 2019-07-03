@@ -14,18 +14,22 @@
         <el-submenu index="/teacher_course">
           <template slot="title">
             <i class="el-icon-menu"></i>
-            <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">我的课程</i>
+            <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 15px">我的课程</i>
           </template>
-          <el-menu-item-group v-loading="loading">
-            <el-menu-item index="/teacher_courses/courseId" v-for="course in createdCourses">
+          <el-submenu v-for="course in createdCourses" :index="'/teacher_courses/' + course.id">
+            <template slot="title">
               <el-link :href="'/#/teacher_course/' + course.id">
-                <i v-if="course.id == createdCourseId" style="color: #409EFF; font-size: 15px; font-style: normal;">
-                  {{course.courseName}}
-                </i>
-                <i v-else style="font-size: 15px; font-style: normal;">{{course.courseName}}</i>
+                <i style="font-style: normal; font-size: 12px">{{course.courseName}}</i>
               </el-link>
-            </el-menu-item>
-          </el-menu-item-group>
+            </template>
+            <el-menu-item-group v-loading="loading">
+              <el-menu-item v-for="publishedCourse in course.terms" :index="'/teacher_term_course/' + publishedCourse.id">
+                <el-link :href="'/#/teacher_course/' + course.id + '/term_course/' + publishedCourse.id">
+                  <i style="font-style: normal; font-size: 12px">{{publishedCourse.term}}</i>
+                </el-link>
+              </el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
         </el-submenu>
       </el-menu>
     </el-aside>
@@ -402,6 +406,7 @@ export default {
         loading.close()
         const info = res.data
         let list1 = info.classes
+        this.tableData = []
         for (let courseclass of list1) {
           console.log(courseclass)
           this.tableData.push({
@@ -416,9 +421,11 @@ export default {
         this.season = info.year + '年' + info.season + '学期'
         this.teacher = info.publisher
         // alert(this.title)
+        this.opinion = []
         this.opinion.push('本科生')
         this.opinion.push('研究生')
         this.opinion.push('博士生')
+        this.opinionData = []
         this.opinionData.push({
           value: info.numOfUndergraduate,
           name: '本科生'
@@ -769,19 +776,39 @@ export default {
       }).then(function (res) {
         this.loading = false
         const info = res.data
-        console.log(info)
+        this.createdCourses = []
         for (let key in info) {
           this.createdCourses.push({
             id: key,
-            courseName: info[key]
+            courseName: info[key],
+            terms: []
           })
         }
+
+        this.getCourse()
+        console.log(this.createdCourses)
       }.bind(this)).catch(function (err) {
         console.log(err)
         if (err.response.status === 401) {
           this.$router.push('/login_register')
         }
       }.bind(this))
+    },
+    getCourse () {
+      for (let course of this.createdCourses) {
+        this.$axios({
+          method: 'get',
+          url: 'http://localhost:8080/vue/teacher/course/' + course.id
+        }).then(function (res) {
+          const info = res.data
+          course.terms = info.terms
+        }).catch(function (err) {
+          console.log(err)
+          if (err.response.status === 401) {
+            this.$router.push('/login_register')
+          }
+        }.bind(this))
+      }
     },
 
     getInfo () {
@@ -921,7 +948,16 @@ export default {
       teacher: '',
 
       // 获得侧边栏
-      createdCourses: []
+      createdCourses: [],
+      index: 0,
+      year: '',
+      seasons: ['春季', '夏季', '秋季', '冬季'],
+      chosenSeason: '',
+      courseName: '',
+      chosenCourse: '',
+      publishedCourses: [],
+      classes: [],
+      fileList: []
     }
   }
 }
