@@ -1,6 +1,6 @@
 <template>
   <el-container style="height: 590px; border: 1px solid #eee">
-    <el-aside width="200px" class="el-aside">
+    <el-aside width="18%" class="el-aside">
       <el-menu :default-openeds="['/teacher_course']" default-active="/teacher_course" style="height: 588px">
         <el-link href="/#/teacher_main">
           <el-menu-item index="/teacher_main">
@@ -63,7 +63,7 @@
 
       <el-main>
         <el-col :span="2"><br></el-col>
-        <el-col :span="10">
+        <el-col :span="14">
           <el-card class="box-card" style="width: 500px">
             <h2>{{ currentCourse.name }}</h2>
             <span>创建者：{{currentCourse.creator}}</span><br><br>
@@ -96,8 +96,8 @@
         </el-col>
         <el-col :span="6">
           <el-card class="box-card" style="width: 100%">
-            <el-table :data="publishedCourses" border style="width: 80%" align="center" header-algin="center">
-              <el-table-column prop="term" label="学期" width="218">
+            <el-table :data="publishedCourses" border style="width: 100%" align="center" header-algin="center">
+              <el-table-column prop="term" label="学期" width="208">
                 <template slot-scope="scope">
                   <el-link :href="'/#/teacher_course/' + createdCourseId + '/term_course/' + scope.row.id">
                     {{scope.row.term}}
@@ -107,7 +107,7 @@
             </el-table>
           </el-card>
         </el-col>
-        <el-col :span="6"><br></el-col>
+        <el-col :span="2"><br></el-col>
       </el-main>
     </el-container>
   </el-container>

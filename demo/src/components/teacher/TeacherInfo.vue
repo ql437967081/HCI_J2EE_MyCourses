@@ -1,39 +1,36 @@
 <template>
   <el-container style="height: 590px; border: 1px solid #eee">
-    <el-aside width="200px" class="el-aside">
-      <el-menu :default-openeds="['1']" default-active="/student_main" style="height: 588px">
+    <el-aside width="18%" class="el-aside">
+      <el-menu :default-openeds="['/teacher_main']" default-active="/teacher_main" style="height: 588px">
         <el-link href="/#/teacher_main">
           <el-menu-item index="/teacher_main">
             <template slot="title">
-              <i class="el-icon-s-home" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">主页</i>
+              <i class="el-icon-s-home" style="color: grey"></i>
+              <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 15px">主页</i>
             </template>
           </el-menu-item>
         </el-link>
-        <el-menu-item index="/teacher_main">
+
+        <el-submenu index="/teacher_course">
           <template slot="title">
-            <el-link href="/#/teacher_create_course">
-              <i class="el-icon-menu" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">创建课程</i>
-            </el-link>
+            <i class="el-icon-menu"></i>
+            <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 15px">我的课程</i>
           </template>
-        </el-menu-item>
-        <el-menu-item index="/teacher_main">
-          <template slot="title">
-            <el-link href="/#/teacher_publish_course">
-              <i class="el-icon-menu" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">发布课程</i>
-            </el-link>
-          </template>
-        </el-menu-item>
-        <el-menu-item index="/teacher_main">
-          <template slot="title">
-            <el-link href="/#/teacher_course">
-              <i class="el-icon-menu" style="color: #409EFF"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: #409EFF; font-size: 18px">我的课程</i>
-            </el-link>
-          </template>
-        </el-menu-item>
+          <el-submenu v-for="course in createdCourses" :index="'/teacher_courses/' + course.id">
+            <template slot="title">
+              <el-link :href="'/#/teacher_course/' + course.id">
+                <i style="font-style: normal; font-size: 12px">{{course.courseName}}</i>
+              </el-link>
+            </template>
+            <el-menu-item-group v-loading="loading">
+              <el-menu-item v-for="publishedCourse in course.terms" :index="'/teacher_term_course/' + publishedCourse.id">
+                <el-link :href="'/#/teacher_course/' + course.id + '/term_course/' + publishedCourse.id">
+                  <i style="font-style: normal; font-size: 12px">{{publishedCourse.term}}</i>
+                </el-link>
+              </el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+        </el-submenu>
       </el-menu>
     </el-aside>
 
@@ -42,8 +39,8 @@
         <el-dropdown>
           <span class="el-dropdown-link">
             <span style="position:relative;">
-              <el-image  :src="url" :fit="fit" style="width: 30px; height: 30px;"></el-image>
-              <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+              <el-image :src="url" :fit="fit" style="width: 30px; height: 30px;"></el-image>
+              <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
               <span style="font-size: 15px; color: aliceblue; position: absolute;top:0; left: 40px">
                 {{name}}
                 <i class="el-icon-arrow-down el-icon--right"></i>
@@ -105,26 +102,53 @@
     export default {
         name: "TeacherInfo",
         mounted: function () {
-          this.getInfo()
-        },
-        data () {
-          return {
-            loading: true,
-            courses: [],
-            fit: 'cover',
-            url: 'http://localhost:8080/img/portrait/default portrait.png',
-            imageUrl: '',
-            labelPosition: 'right',
-            formLabelAlign: {
-              name: '',
-              teacherID: '',
-              email: ''
-            },
-            name: '',
-            portrait: null
-          }
+          this.init()
         },
         methods: {
+          init() {
+            this.createdCourses = []
+            this.getInfo()
+            this.getMyCreatedCourses()
+          },
+          getMyCreatedCourses () {
+            this.$axios({
+              method: 'get',
+              url: 'http://localhost:8080/vue/teacher/course'
+            }).then(function (res) {
+              this.loading = false
+              const info = res.data
+              for(let key in info){
+                this.createdCourses.push({
+                  id: key,
+                  courseName: info[key],
+                  terms : []
+                })
+              }
+              this.getCourse()
+              console.log(this.createdCourses)
+            }.bind(this)).catch(function (err) {
+              console.log(err)
+              if (err.response.status === 401) {
+                this.$router.push('/login_register')
+              }
+            }.bind(this))
+          },
+          getCourse() {
+            for(let course of this.createdCourses) {
+              this.$axios({
+                method: 'get',
+                url: 'http://localhost:8080/vue/teacher/course/'+ course.id
+              }).then(function (res) {
+                const info = res.data
+                course.terms = info.terms
+              }.bind(this)).catch(function (err) {
+                console.log(err)
+                if (err.response.status === 401) {
+                  this.$router.push('/login_register')
+                }
+              }.bind(this))
+            }
+          },
           handleAvatarChange (file) {
             this.imageUrl = URL.createObjectURL(file.raw)
           },
@@ -171,6 +195,26 @@
               this.$message.error('修改失败：服务器繁忙，请稍后重试！')
               this.getInfo()
             }.bind(this))
+          }
+        },
+        data () {
+          return {
+            loading: true,
+            courses: [],
+            fit: 'cover',
+            url: 'http://localhost:8080/img/portrait/default portrait.png',
+            imageUrl: '',
+            labelPosition: 'right',
+            formLabelAlign: {
+              name: '',
+              teacherID: '',
+              email: ''
+            },
+            name: '',
+            portrait: null,
+            createdCourses: [],
+            publishedCourses: [],
+            course: {},
           }
         }
     }

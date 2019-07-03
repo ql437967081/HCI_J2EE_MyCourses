@@ -1,6 +1,6 @@
 <template>
   <el-container style="height: 590px; border: 1px solid #eee">
-    <el-aside width="200px" class="el-aside">
+    <el-aside width="18%" class="el-aside">
       <el-menu :default-openeds="['/teacher_main']" default-active="/teacher_main" style="height: 588px">
         <el-link href="/#/teacher_main">
           <el-menu-item index="/teacher_main">
@@ -40,7 +40,7 @@
           <span class="el-dropdown-link">
             <span style="position:relative;">
               <el-image :src="url" :fit="fit" style="width: 30px; height: 30px;"></el-image>
-              <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+              <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
               <span style="font-size: 15px; color: aliceblue; position: absolute;top:0; left: 40px">
                 {{name}}
                 <i class="el-icon-arrow-down el-icon--right"></i>
@@ -59,7 +59,6 @@
       </el-header>
 
       <el-main class="teacherMain" style="margin-top: 10px">
-        <h2>主页</h2>
         <el-col :span="4"><br/></el-col>
         <el-col :span="16">
           <el-card class="box-card" style="width: 100%">
@@ -94,7 +93,7 @@
               </el-tab-pane>
               <el-tab-pane name="second">
                 <span slot="label">&nbsp;<i class="el-icon-s-order"></i> 发布课程&nbsp;</span>
-                <el-card class="box-card" style="width: 100%">
+                <el-card class="box-card" style="width: 120%">
                   <el-form label-width="80px">
                     <el-form-item style="text-align: left" label="学期">
                       <el-date-picker v-model="year" type="year" placeholder="选择年份" :picker-options="pickerOptionsStart"></el-date-picker>

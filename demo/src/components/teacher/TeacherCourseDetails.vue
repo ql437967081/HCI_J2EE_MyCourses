@@ -1,7 +1,7 @@
 <template>
   <el-container style="height: 590px; border: 1px solid #eee">
-    <el-aside width="200px" class="el-aside">
-      <el-menu :default-openeds="['/teacher_course']" default-active="/teacher_courses/courseId" style="height: 588px">
+    <el-aside width="18%" class="el-aside">
+      <el-menu :default-openeds="['/teacher_course','/teacher_courses/' + selectedcourse]" default-active="/teacher_courses/courseId" style="height: 588px">
         <el-link href="/#/teacher_main">
           <el-menu-item index="/teacher_main">
             <template slot="title">
@@ -25,7 +25,11 @@
             <el-menu-item-group v-loading="loading">
               <el-menu-item v-for="publishedCourse in course.terms" :index="'/teacher_term_course/' + publishedCourse.id">
                 <el-link :href="'/#/teacher_course/' + course.id + '/term_course/' + publishedCourse.id">
-                  <i style="font-style: normal; font-size: 12px">{{publishedCourse.term}}</i>
+                  <i v-if="publishedCourse.id == coursetermid" style="color: #409EFF; font-size: 12px; font-style: normal;">
+                    {{publishedCourse.term}}
+                  </i>
+                  <i v-else style="font-size: 12px; font-style: normal;">{{publishedCourse.term}}</i>
+<!--                  <i style="font-style: normal; font-size: 12px; v-if">{{publishedCourse.term}}</i>-->
                 </el-link>
               </el-menu-item>
             </el-menu-item-group>
@@ -212,36 +216,36 @@
                     <el-table-column
                       prop="content"
                       label="内容"
-                      width="250">
+                      width="253">
                     </el-table-column>
                     <el-table-column
                       prop="date"
                       label="截止时间"
-                      width="120">
+                      width="100">
                     </el-table-column>
                     <el-table-column
                       prop="size"
                       label="大小限制"
-                      width="70">
+                      width="80">
                     </el-table-column>
                     <el-table-column
                       prop="type"
                       label="文件类型"
-                      width="63">
+                      width="80">
                     </el-table-column>
                     <el-table-column
                       prop="zip"
                       label="提交人数"
-                      width="70">
+                      width="80">
                     </el-table-column>
                     <el-table-column
-                      label="下载作业"
-                      width="100"
+                      label="下载"
+                      width="80"
                     >
                       <template slot-scope="scope">
                         <form :id="scope.row.requestid" method="get" target="_blank"
                               :action="'http://localhost:8080/vue/teacher/downloadhomework/' + scope.row.requestid"></form>
-                        <el-button @click="handleClick(scope.row)" type="text" size="small">下载</el-button>
+                        <el-button @click="handleClick(scope.row)" type="text" size="small" ><i class="el-icon-download"> </i></el-button>
                       </template>
                     </el-table-column>
                   </el-table>
@@ -365,6 +369,7 @@ export default {
   methods: {
     init () {
       this.getInfo()
+      this.selectedcourse = this.$route.params.course_id
       this.coursetermid = this.$route.params.publishedCourse_id
       // 方便测试，之后要删除
       // this.coursetermid = 5
@@ -957,7 +962,8 @@ export default {
       chosenCourse: '',
       publishedCourses: [],
       classes: [],
-      fileList: []
+      fileList: [],
+      selectedcourse: ''
     }
   }
 }

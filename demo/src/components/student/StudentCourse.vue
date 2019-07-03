@@ -36,7 +36,7 @@
           <span class="el-dropdown-link">
             <span style="position:relative;">
               <el-image  :src="url" :fit="fit" style="width: 30px; height: 30px;"></el-image>
-              <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+              <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
               <span style="font-size: 15px; color: aliceblue; position: absolute;top:0; left: 40px">
                 {{name}}
                 <i class="el-icon-arrow-down el-icon--right"></i>
