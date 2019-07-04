@@ -82,7 +82,7 @@
                         <el-table-column prop="name" label="待上传课件">
                           <template slot-scope="scope">
                             {{scope.row.name}}
-                            <el-button type="text" v-on:click="handleRemove(scope.row.index)">&nbsp;&nbsp;删除</el-button>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <el-button type="text" v-on:click="handleRemove(scope.$index)">&nbsp;&nbsp;删除</el-button>&nbsp;&nbsp;&nbsp;&nbsp;
                           </template>
                         </el-table-column>
                       </el-table>
@@ -106,7 +106,7 @@
                     </el-form-item>
                     <el-form-item style="text-align: left" label="课程">
                       <el-select v-model="chosenCourse" placeholder="选择课程">
-                        <el-option v-for="course in createdCourses" :value="course.courseName" :label="course.courseName"></el-option>
+                        <el-option v-for="course in publishedCourses" :value="course.name" :label="course.name"></el-option>
                       </el-select>
                     </el-form-item>
                     <el-form-item style="text-align: left" label="班次">
@@ -145,6 +145,7 @@
         this.createdCourses = []
         this.getInfo()
         this.getMyCreatedCourses()
+        this.getPublishCourse()
       },
       getInfo() {
         this.$axios({
@@ -199,6 +200,22 @@
           }.bind(this))
         }
       },
+      getPublishCourse() {
+        this.$axios({
+          method: 'get',
+          url: 'http://localhost:8080/vue/teacher/course/publish_course'
+        }).then(function (res) {
+          const info = res.data
+          console.log('-------------')
+          console.log(info)
+          this.publishedCourses = info.courseList
+        }.bind(this)).catch(function (err) {
+          console.log(err)
+          if (err.response.status === 401) {
+            this.$router.push('/login_register')
+          }
+        }.bind(this))
+      },
       createCourse() {
         if(this.courseName !== '' || this.courseName !== null) {
           let formData = new FormData()
@@ -217,7 +234,6 @@
           }).then(function (res) {
             const info = res.data
             if (info >= 0) {
-              this.$message.success('课程创建成功！')
               this.$router.push('/teacher_course/'+ info)
             } else {
               this.$message.error('课程创建失败！')
@@ -265,7 +281,6 @@
         }).then(function (res) {
           const info = res.data
           if (info >= 0) {
-            this.$message.success('课程发布成功！')
             this.$router.push('/teacher_course/'+ courseId + '/term_course/' + info)
             this.index = 0
           } else {

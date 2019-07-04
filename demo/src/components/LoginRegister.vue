@@ -70,7 +70,7 @@ export default {
           this.$message.error('未进行邮箱验证或已经注销！')
         } else if (result.result === 'SUCCESS') {
           if (result.type === 'STUDENT') {
-            this.$router.push('/student_main')
+            this.$router.push('/student_course')
           } else if (result.type === 'TEACHER') {
             this.$router.push('/teacher_main')
           } else if (result.type === 'ADMINISTRATOR') {

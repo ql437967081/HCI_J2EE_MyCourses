@@ -43,7 +43,7 @@
           <span class="el-dropdown-link">
             <span style="position:relative;">
               <el-image :src="url" :fit="fit" style="width: 30px; height: 30px;"></el-image>
-              <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+               <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
               <span style="font-size: 15px; color: aliceblue; position: absolute;top:0; left: 40px">
                 {{name}}
                 <i class="el-icon-arrow-down el-icon--right"></i>
@@ -85,7 +85,7 @@
                       </el-link>
                       </i>
                       <i v-else style="color: #a6a9ad"> {{scope.row.name}} (未提交)</i>
-                      <el-button type="text" v-on:click="handleRemove(scope.row.index, scope.row)">&nbsp;&nbsp;删除</el-button>&nbsp;&nbsp;&nbsp;&nbsp;
+                      <el-button type="text" v-on:click="handleRemove(scope.$index, scope.row)">&nbsp;&nbsp;删除</el-button>&nbsp;&nbsp;&nbsp;&nbsp;
                     </template>
                   </el-table-column>
                 </el-table>
@@ -192,18 +192,20 @@
           }).then(function (res) {
              this.loading = false
              this.currentCourse = res.data
-             console.log(this.currentCourse)
              if(this.currentCourse.status === 'SUBMIT') {
                this.$message('课程' + this.currentCourse.name + '的创建请求已提交MyCourses主管审批，请耐心等待！')
                this.$router.push('/teacher_main')
+               return
              }
              else if(this.currentCourse.status === 'REJECTED') {
                this.$message.error('课程' + this.currentCourse.name + '未通过MyCourses主管审批！')
                this.$router.push('/teacher_main')
+               return
              }
              else if(this.currentCourse.status === 'REJECTED_READ') {
                this.$message.error('课程不存在或未通过MyCourses主管审批！')
                this.$router.push('/teacher_main')
+               return
              }
              this.coursewares = this.currentCourse.coursewares
              this.fileList = []
@@ -252,6 +254,7 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
+            console.log(index)
             console.log(courseware)
             if(courseware.status === 'success') {
               let wareId = courseware.id
@@ -278,6 +281,7 @@
                 }
               }.bind(this))
             }
+
             this.coursewares.splice(index, 1)
             console.log(this.coursewares)
           }).catch(function (err) {

@@ -52,7 +52,7 @@
             </span>
           </span>
           <el-dropdown-menu slot="dropdown" style="width: 100px">
-            <el-link href="/#/student_info">
+            <el-link href="/#/teacher_info">
               <el-dropdown-item style="font-size: 15px">个人信息</el-dropdown-item>
             </el-link>
             <el-link href="/#/logout">
@@ -294,6 +294,9 @@
                               <!--<div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>-->
                               <!--<div class="el-upload__tip" slot="tip" style="margin-top: 0.1px">只能上传jpg/png文件，且不超过500kb</div>-->
                               <el-button size="small" type="primary" style="float: left ;">点击上传</el-button>
+                              <div v-if="sheet" class="el-icon-document">
+                                &nbsp;&nbsp;{{sheet.name}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                              </div>
                               <!--<div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>-->
                             </el-upload>
                           </el-form-item>
@@ -362,7 +365,7 @@
 import { getLoading } from '../../loading'
 import echarts from 'echarts'
 export default {
-  name: 'StudentCourseDetail',
+  name: 'TeacherCourseDetail',
   mounted: function () {
     this.init()
   },
@@ -410,6 +413,19 @@ export default {
       }).then(function (res) {
         loading.close()
         const info = res.data
+        if (info.status === 'SUBMIT') {
+          this.$message('课程' + info.name + ' ' + info.term + '的发布请求已提交MyCourses主管审批，请耐心等待！')
+          this.$router.push('/teacher_main')
+          return
+        } else if (info.status === 'REJECTED') {
+          this.$message.error('课程' + info.name + ' ' + info.term + '的发布未通过MyCourses主管审批！')
+          this.$router.push('/teacher_main')
+          return
+        } else if (info.status === 'REJECTED_READ') {
+          this.$message.error('课程未发布或发布未通过MyCourses主管审批！')
+          this.$router.push('/teacher_main')
+          return
+        }
         let list1 = info.classes
         this.tableData = []
         for (let courseclass of list1) {
@@ -638,9 +654,14 @@ export default {
       }).then(function (res) {
         loading.close()
         const info = res.data
-        let index = 3
+        let index = 2
         let list = info.homeworkBeans
         this.option1s = []
+        this.option1s.push({
+          value: '选项' + 1,
+          label: '考试',
+          id: -1
+        })
         for (let homework of list) {
           console.log(homework)
           this.option1s.push({
@@ -721,7 +742,6 @@ export default {
     },
     beforeUpload (file) {
       this.sheet = file
-      this.$message.success('成绩上传成功！')
     },
     onSubmit2 () {
       this.$confirm('确定发布这次成绩吗？', '提示', {
@@ -750,6 +770,7 @@ export default {
             this.$message.success('成绩发布成功！')
             this.resetForm('form2')
             this.getbeforeGrades()
+            this.sheet = null
             this.imageUrl = null
           } else {
             this.$message.error('成绩发布失败')

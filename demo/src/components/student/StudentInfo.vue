@@ -2,14 +2,6 @@
   <el-container style="height: 590px; border: 1px solid #eee">
     <el-aside width="200px" class="el-aside">
       <el-menu :default-openeds="['1']" style="height: 588px">
-        <el-link href="/#/student_main">
-          <el-menu-item index="/student_main">
-            <template slot="title">
-              <i class="el-icon-s-home"></i>
-              <i class="course" style="font-weight: bold; font-style: normal; color: grey; font-size: 18px">主页</i>
-            </template>
-          </el-menu-item>
-        </el-link>
         <el-submenu index="/student_course">
           <template slot="title">
             <el-link href="/#/student_course">

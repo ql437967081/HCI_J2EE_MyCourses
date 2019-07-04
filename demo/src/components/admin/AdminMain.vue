@@ -169,6 +169,7 @@ export default {
         }, 10000);
       }.bind(this)).catch(function (err) {
         console.log(err)
+        loading.close()
         if (err.response.status === 401) {
           this.$router.push('/login_register')
         }

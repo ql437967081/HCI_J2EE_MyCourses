@@ -1,7 +1,7 @@
 package edu.nju.wsql.controller.vue.teacher;
 
 import edu.nju.wsql.beans.CourseBean;
-import edu.nju.wsql.beans.StudentTermCourseBean;
+import edu.nju.wsql.beans.PublishCourseBean;
 import edu.nju.wsql.controller.utils.CoursewareUtil;
 import edu.nju.wsql.model.CourseClass;
 import edu.nju.wsql.model.Courseware;
@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,6 +26,12 @@ public class VueTeacherCourseController {
     CourseService courseService;
     @Autowired
     private FileService fileService;
+
+    @GetMapping("/publish_course")
+    @ResponseBody
+    public PublishCourseBean getPublishCourses(HttpServletRequest request, HttpSession session) {
+        return courseService.getPublishInfo((String) session.getAttribute("login"));
+    }
 
     @GetMapping
     @ResponseBody
